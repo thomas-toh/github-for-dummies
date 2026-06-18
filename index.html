@@ -89,6 +89,20 @@ input{font-family:inherit}
 #gc .foot .lnk{border:none;color:var(--color-text-tertiary);font-size:12px;padding:6px 4px}
 #gc .foot .lnk:hover{background:transparent;color:var(--color-text-secondary);text-decoration:underline}
 #gc #win{display:none;background:var(--color-background-success);border-radius:var(--border-radius-md);padding:12px 14px;margin-top:12px;color:var(--color-text-success);line-height:1.6}
+#gc .daily{background:var(--color-background-info);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:14px}
+#gc .daily h3{margin:0;font-size:15px;font-weight:600;color:var(--color-text-info)}
+#gc .daily .streak{font-size:12.5px;color:var(--color-text-info);margin-top:3px;opacity:.95}
+#gc .daily .task{color:var(--color-text-primary);margin-top:9px;line-height:1.55;font-size:13.5px}
+#gc .mfields{display:flex;flex-direction:column;gap:8px;margin-top:9px}
+#gc .mrow{display:flex;gap:10px;align-items:baseline}
+#gc .mk{flex:0 0 88px;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--color-text-tertiary);font-weight:600;padding-top:2px}
+#gc .mv{flex:1;color:var(--color-text-primary);line-height:1.5;font-size:13.5px}
+#gc .mv.mono{font-family:var(--font-mono);font-size:12.5px;color:var(--color-text-info);background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:6px 9px;align-self:flex-start}
+#gc .expl{margin-top:11px;padding-top:11px;border-top:.5px solid var(--color-border-tertiary);font-size:12.5px;line-height:1.6;display:none}
+#gc .expl .en{margin:3px 0;color:var(--color-text-secondary)}
+#gc .expl .ew{margin:3px 0;color:var(--color-text-warning)}
+#gc .expl .erc{margin:5px 0 2px;color:var(--color-text-success);font-weight:500}
+#gc .expl .erp{margin:5px 0 2px;color:var(--color-text-info)}
 </style>
 
 <div class="map" id="map"></div>
@@ -99,13 +113,13 @@ input{font-family:inherit}
     <strong id="mtitle" style="font-weight:500"></strong>
     <div class="pdots" id="pdots"></div>
   </div>
-  <p class="goal" id="mgoal"></p>
-  <div class="toggles">
-    <button id="whyb" style="font-size:13px"><i class="ti ti-help-circle" aria-hidden="true"></i> What's this?</button>
-    <button id="hintb" style="font-size:13px"><i class="ti ti-bulb" aria-hidden="true"></i> Hint</button>
+  <div class="mfields">
+    <div class="mrow"><span class="mk">Goal</span><span class="mv" id="mgoal"></span></div>
+    <div class="mrow"><span class="mk">What it does</span><span class="mv" id="mdef"></span></div>
+    <div class="mrow" id="msyntaxrow"><span class="mk">Syntax</span><span class="mv mono" id="msyntax"></span></div>
+    <div class="mrow"><span class="mk">Do this</span><span class="mv mono" id="mdo"></span></div>
   </div>
-  <p id="why" class="why"></p>
-  <p id="hint" class="hint"></p>
+  <div class="expl" id="expl"></div>
 </div>
 
 <div class="pipe">
@@ -162,15 +176,24 @@ var CH=[
  blurb:"Every project that uses git is a “repository” — a folder git is keeping an eye on. There are exactly two ways to get one: start a fresh one, or copy someone else's.",
  onEnter:function(){S=blank();S.local={};S.inited=false;fb=null},
  missions:[
-  {t:"Turn this folder into a repo",g:"You have a plain folder. Run init to let git start tracking it.",
-   why:"git init is like installing a security camera in a room you already own. Nothing changes about your files — git just quietly starts watching, ready to take snapshots when you ask. It creates a hidden .git folder; that's the camera. You do this once per project, ever.",
-   h:"git init",chk:function(c){return /^git\s+init/.test(c.trim())}},
-  {t:"Check the status",g:"See what git thinks of your brand-new, empty repo.",
-   why:"git status is the question you'll ask git more than any other: “so… where are we?” On a fresh repo it says “No commits yet” — the camera's on, but it hasn't taken a single photo. Get in the habit of running it constantly; it's free and it stops surprises.",
-   h:"git status",chk:function(c){return /^git\s+status/.test(c.trim())}},
-  {t:"(Or) copy an existing project",g:"The other way in: clone a project that already exists online.",
-   why:"git clone is “init + download everything + remember where I got it,” all in one. You use init when YOU are starting something; you use clone when you're joining something that already exists. Notice you didn't have to init after cloning — clone already did it for you.",
-   h:"git clone https://github.com/anthropics/courses.git",chk:function(c){return /^git\s+clone\s+\S/.test(c.trim())}}
+  {t:"Turn this folder into a repo",
+   g:"You have a plain folder. Make git start tracking it.",
+   def:"git init creates a brand-new, empty git repository in the folder you're in. Concretely, it makes a hidden “.git” sub-folder where git will store every snapshot and all your history. Your existing files aren't touched — git just starts watching, ready to take snapshots when you ask. You run it once per project, ever.",
+   syntax:"git init   —   takes no arguments; it acts on your current folder",
+   do:"git init",
+   chk:function(c){return /^git\s+init/.test(c.trim())}},
+  {t:"Check the status",
+   g:"See what git makes of your brand-new, empty repo.",
+   def:"git status shows the current state of your repository: which branch you're on, which files have changed, and which of those changes are staged for the next commit. It changes nothing, so it's safe to run any time — on a fresh repo it just reports “No commits yet.” You'll lean on it constantly.",
+   syntax:"git status   —   takes no arguments",
+   do:"git status",
+   chk:function(c){return /^git\s+status/.test(c.trim())}},
+  {t:"Or: copy an existing project",
+   g:"The other way to get a repo — copy one that already exists online.",
+   def:"git clone copies a repository that already exists somewhere else (usually on GitHub) onto your computer. It downloads every file plus the complete history into a new folder, sets up a link back to the source (which it names “origin”), and checks out the default branch so you're ready to work. In short: it's init + download everything + remember where it came from.",
+   syntax:"git clone <url> [<folder>]   —   one required argument, the repo's URL; folder name optional",
+   do:"git clone https://github.com/anthropics/courses.git",
+   chk:function(c){return /^git\s+clone\s+\S/.test(c.trim())}}
  ],
  recap:"git init = start watching a folder · git status = “where are we?” · git clone URL = grab an existing project (init + download + remote, in one)."},
 
@@ -178,18 +201,30 @@ var CH=[
  blurb:"A change moves through three places before it's saved forever: your working folder → the staging area → history. Let's push one change all the way through, then learn the shortcut.",
  onEnter:function(){S=blank();fb=null},
  missions:[
-  {t:"Check the status",g:"You edited notes.txt. Run status to see it waiting in your working folder.",
-   why:"Three areas, one analogy: your working folder is your messy desk, staging is the box you're packing, and history is the shelf of sealed, labelled boxes. Right now notes.txt is just sitting on the desk. status shows you exactly that.",
-   h:"git status",setup:function(){seed('notes.txt')},chk:function(c){return /^git\s+status/.test(c.trim())}},
-  {t:"Stage the change",g:"Move notes.txt into staging — you're choosing what goes in the next snapshot.",
-   why:"git add puts a file in the packing box. Why a box at all, instead of just saving everything? Because real edits are messy — you might fix a typo AND start a half-baked idea in the same afternoon. Staging lets you pack ONLY the typo fix. Variants: git add notes.txt (one file) · git add . (everything under the current folder — new files, edits AND deletions) · git add -A (the same, but across the whole repo no matter which subfolder you're standing in) · git add -p (review change-by-change — the surgeon's option).",
-   h:"git add notes.txt   (or git add .)",chk:function(){return S.staging.length>0}},
-  {t:"Commit it",g:"Seal and label the staged change as a permanent snapshot.",
-   why:"git commit tapes the box shut and writes on the lid. The -m \"...\" is that label — a note to future-you about what's inside. Write it for the confused human you'll be in six months, not for the computer. “fix login crash” good; “stuff” bad. Nothing is truly saved in git's memory until you commit.",
-   h:'git commit -m "edit notes"',chk:function(){return hl('main')>=2}},
-  {t:"Do the whole loop again",g:"You edited notes.txt again. Stage it, then commit it. This rhythm is 90% of using git.",
-   why:"edit → add → commit, over and over, forever. That's the heartbeat. The shortcut git commit -am \"msg\" does the add and commit in one breath — but ONLY for files git already knows about (brand-new files still need a plain git add first). Try either way.",
-   h:'git add . ; git commit -m "more notes"   (or git commit -am "more notes")',setup:function(){seed('notes.txt')},chk:function(){return hl('main')>=3}}
+  {t:"Check the status",
+   g:"You edited notes.txt. See it sitting in your working folder.",
+   def:"git status reports what has changed and which of git's three areas each change is in: your working directory (edits you've made), the staging area (changes lined up for the next commit), and committed history. Right now notes.txt shows up as changed but “not staged”.",
+   syntax:"git status   —   takes no arguments",
+   do:"git status",
+   setup:function(){seed('notes.txt')},chk:function(c){return /^git\s+status/.test(c.trim())}},
+  {t:"Stage the change",
+   g:"Move notes.txt into the staging area — you're picking what goes in the next snapshot.",
+   def:"git add stages changes: it copies the current state of the files you name into the staging area, marking them for the next commit. It doesn't save anything permanently yet — it just chooses what the next snapshot will contain. Common forms: git add <file> (one file) · git add . (everything under the current folder) · git add -A (everything across the whole repo) · git add -p (approve changes one chunk at a time).",
+   syntax:"git add <file>...   —   one or more file paths (or . for everything here)",
+   do:"git add notes.txt",
+   chk:function(){return S.staging.length>0}},
+  {t:"Commit it",
+   g:"Save the staged change as a permanent snapshot.",
+   def:"git commit takes everything currently in the staging area and records it as a new commit — a permanent, labelled snapshot in your project's history. The -m option attaches a short message describing the change (leave it off and git opens an editor for one). Nothing is truly saved in history until you commit.",
+   syntax:"git commit -m \"<message>\"   —   -m takes one argument: your message, in quotes",
+   do:"git commit -m \"edit notes\"",
+   chk:function(){return hl('main')>=2}},
+  {t:"Do the whole loop again",
+   g:"You edited notes.txt again. Stage it, then commit it — this rhythm is 90% of using git.",
+   def:"The everyday cycle is edit → add → commit, over and over. The shortcut git commit -am \"<msg>\" does the add and the commit in one step — but only for files git already tracks (brand-new files still need a plain git add first).",
+   syntax:"git add .   then   git commit -m \"<message>\"   (or combined: git commit -am \"<message>\")",
+   do:"git add . ; git commit -m \"more notes\"",
+   setup:function(){seed('notes.txt')},chk:function(){return hl('main')>=3}}
  ],
  recap:"add = pack the box (./-A/-p variants) · commit -m = seal + label it · commit -am = add + commit in one (tracked files only)."},
 
@@ -436,7 +471,8 @@ var CH=[
 //  TERMINAL OUTPUT
 // ====================================================================
 function line(t,c){var o=document.getElementById('out'),d=document.createElement('div');if(c)d.className=c;d.innerHTML=t;o.appendChild(d);o.scrollTop=o.scrollHeight}
-function note(t){line("ℹ "+t,'di')}
+// note() = course teaching ("what just happened"), shown in the card's explainer — NOT the terminal.
+function note(t,cls){var e=document.getElementById('expl');e.style.display='block';var d=document.createElement('div');d.className=cls||'en';d.textContent=(cls?'':'ℹ ')+t;e.appendChild(d)}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function dots(a){return a.map(function(){return '●'}).join('')}
 
@@ -449,13 +485,9 @@ function goCh(i){
  cid=0;Object.keys(S.local).forEach(function(b){S.local[b].forEach(function(x){var n=parseInt(String(x).replace(/\D/g,''),10);if(n>cid)cid=n})});
  save();
  document.getElementById('out').innerHTML='';
+ var ex=document.getElementById('expl');ex.innerHTML='';ex.style.display='none';
  document.getElementById('win').style.display='none';
  document.getElementById('cmd').disabled=false;
- document.getElementById('why').style.display='none';
- document.getElementById('hint').style.display='none';
- var ab=document.getElementById('actbtn');
- line("<span class='u'>Chapter "+(i+1)+": "+CH[i].title+"</span>",'u');
- line(CH[i].blurb,'di');
  runSetup();syncAction();render();
 }
 function runSetup(){var m=CH[curCh].missions[curM];if(m&&m.setup&&!setupDone){m.setup();setupDone=true}}
@@ -507,8 +539,10 @@ function render(){
  if(m){
   document.getElementById('mtitle').textContent='Mission '+(curM+1)+' · '+m.t;
   document.getElementById('mgoal').textContent=m.g;
-  document.getElementById('why').textContent=m.why||'';
-  document.getElementById('hint').textContent=m.h;
+  document.getElementById('mdef').textContent=m.def||m.why||'';
+  var syn=m.syntax||'';document.getElementById('msyntax').textContent=syn;
+  document.getElementById('msyntaxrow').style.display=syn?'flex':'none';
+  document.getElementById('mdo').textContent=m.do||m.h||'';
  }
 }
 
@@ -541,6 +575,7 @@ function run(raw){
  var c=raw.trim();if(!c)return;
  // ponytail: split chained commands like a real shell. Limitation: a ';'/'&&' inside a quoted commit message would mis-split — no course hint does that.
  if(/;|&&/.test(c)){c.split(/\s*(?:;|&&)\s*/).forEach(function(p){if(p.trim())run(p)});return}
+ var _e=document.getElementById('expl');_e.innerHTML='';_e.style.display='none';   // fresh explainer per command
  line("<span class='u'>$</span> "+esc(c));var m,name;
 
  if(c==='help'){
@@ -675,16 +710,15 @@ function run(raw){
 function check(c){
  var ms=CH[curCh].missions;if(curM>=ms.length)return;
  if(ms[curM].chk(c)){
-  line("✓ "+ms[curM].t+" — done",'ok');curM++;setupDone=false;
-  document.getElementById('why').style.display='none';document.getElementById('hint').style.display='none';
-  if(curM>=ms.length){chapterDone()}else{runSetup();syncAction();render();line("→ Next: "+ms[curM].t,'u')}
+  note("✓ "+ms[curM].t+" — done",'erc');curM++;setupDone=false;
+  if(curM>=ms.length){chapterDone()}else{runSetup();syncAction();render();note("→ Next: "+ms[curM].t,'erp')}
  }
 }
 function chapterDone(){
  if(curCh+1>maxUnlocked)maxUnlocked=curCh+1;
  if(curCh+1>maxCompleted)maxCompleted=curCh+1;
  save();render();
- if(CH[curCh].recap)line("📝 Recap — "+CH[curCh].recap,'di');
+ if(CH[curCh].recap)note("📝 Recap — "+CH[curCh].recap,'erp');
  if(curCh===CH.length-1){grad();return}
  var w=document.getElementById('win');w.style.display='block';
  w.innerHTML="<strong style='font-weight:500'><i class='ti ti-check' aria-hidden='true'></i> Chapter "+(curCh+1)+" complete!</strong> “"+CH[curCh+1].title+"” is unlocked.";
@@ -701,8 +735,6 @@ function grad(){
 //  WIRING
 // ====================================================================
 document.getElementById('cmd').addEventListener('keydown',function(e){if(e.key==='Enter'){run(this.value);this.value=''}});
-document.getElementById('whyb').onclick=function(){var h=document.getElementById('why');h.style.display=h.style.display==='none'?'block':'none'};
-document.getElementById('hintb').onclick=function(){var h=document.getElementById('hint');h.style.display=h.style.display==='none'?'block':'none'};
 document.getElementById('resetb').onclick=function(){goCh(curCh)};
 document.getElementById('unlockb').onclick=function(){maxUnlocked=CH.length-1;save();render();line("All chapters unlocked — jump anywhere from the map above.",'ok')};
 document.getElementById('wipeb').onclick=function(){if(confirm("Wipe all saved progress and start over from Chapter 1?")){try{localStorage.removeItem(KEY)}catch(e){}maxUnlocked=0;maxCompleted=0;startCh=0;goCh(0)}};

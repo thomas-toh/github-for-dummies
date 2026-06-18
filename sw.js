@@ -1,7 +1,7 @@
 // ponytail: cache-first + cache-on-fetch. Precaches the app shell, then caches
 // anything else it fetches (incl. the Tabler icon CDN) so the app works offline
 // after the first online load. Bump CACHE to force clients onto a new version.
-const CACHE = 'git-course-v1';
+const CACHE = 'git-course-v2';
 const CORE = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -18,6 +18,19 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+  const isDoc = e.request.mode === 'navigate' || e.request.destination === 'document';
+  if (isDoc) {
+    // network-first for the app page, so deploys show up immediately when online
+    e.respondWith(
+      fetch(e.request).then(res => {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, copy));
+        return res;
+      }).catch(() => caches.match(e.request).then(h => h || caches.match('./index.html')))
+    );
+    return;
+  }
+  // cache-first for everything else (icons, the CDN font) — fast + offline
   e.respondWith(
     caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
       const copy = res.clone();
