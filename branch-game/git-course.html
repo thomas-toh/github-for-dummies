@@ -1,0 +1,807 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Git course — learn by doing</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.31.0/tabler-icons.min.css">
+<style>
+:root{
+ --font-sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,monospace;--font-serif:Georgia,serif;
+ --color-background-primary:#fff;--color-background-secondary:#f5f4ef;--color-background-tertiary:#ecebe4;
+ --color-background-info:#e6f1fb;--color-background-success:#e1f5ee;--color-background-warning:#faeeda;--color-background-danger:#fcebeb;
+ --color-text-primary:#1a1a18;--color-text-secondary:#5f5e5a;--color-text-tertiary:#888780;
+ --color-text-info:#185fa5;--color-text-success:#0f6e56;--color-text-warning:#854f0b;--color-text-danger:#a32d2d;
+ --color-border-tertiary:rgba(0,0,0,.15);--color-border-secondary:rgba(0,0,0,.3);--color-border-info:#378add;
+ --border-radius-md:8px;--border-radius-lg:12px;--border-radius-xl:16px;
+}
+@media(prefers-color-scheme:dark){:root{
+ --color-background-primary:#1f1f1d;--color-background-secondary:#2a2a27;--color-background-tertiary:#333330;
+ --color-background-info:#0c447c;--color-background-success:#085041;--color-background-warning:#633806;--color-background-danger:#791f1f;
+ --color-text-primary:#ececed;--color-text-secondary:#b4b2a9;--color-text-tertiary:#888780;
+ --color-text-info:#85b7eb;--color-text-success:#5dcaa5;--color-text-warning:#fac775;--color-text-danger:#f09595;
+ --color-border-tertiary:rgba(255,255,255,.15);--color-border-secondary:rgba(255,255,255,.3);
+}}
+body{margin:0;padding:24px;max-width:760px;margin:0 auto;background:var(--color-background-tertiary);color:var(--color-text-primary);font-family:var(--font-sans)}
+button{font-family:inherit;background:transparent;border:.5px solid var(--color-border-secondary);color:var(--color-text-primary);border-radius:var(--border-radius-md);padding:6px 12px;cursor:pointer}
+button:hover{background:var(--color-background-secondary)}button:active{transform:scale(.98)}button:disabled{opacity:.5;cursor:not-allowed}
+input{font-family:inherit}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+
+<div id="gc">
+<h2 class="sr-only">An interactive, multi-chapter git course.</h2>
+
+<style>
+#gc{font-family:var(--font-sans);font-size:14px}
+#gc .map{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+#gc .sech{flex-basis:100%;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--color-text-tertiary);font-weight:600;margin:8px 0 -2px}
+#gc .sech:first-child{margin-top:0}
+#gc .ch{flex:1;min-width:128px;text-align:left;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:9px 11px;cursor:pointer;font-family:inherit;position:relative}
+#gc .ch:disabled{opacity:.5;cursor:not-allowed}
+#gc .ch.on{border:2px solid var(--color-border-info);padding:8px 10px}
+#gc .ch .cn{font-size:11px;color:var(--color-text-tertiary)}
+#gc .ch .ct{font-size:13px;font-weight:500;display:block;margin-top:1px}
+#gc .ch .cdone{color:var(--color-text-success)}
+#gc .ch .diff{position:absolute;top:8px;right:9px;font-size:9px;color:var(--color-text-tertiary);letter-spacing:1px}
+#gc .blurb{color:var(--color-text-secondary);line-height:1.6;margin:0 0 14px;font-size:13.5px}
+#gc .mcard{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:14px}
+#gc .mtop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px}
+#gc .pdots{display:flex;gap:5px}
+#gc .pdot{width:9px;height:9px;border-radius:50%;background:var(--color-border-secondary)}
+#gc .pdot.done{background:var(--color-text-success)}
+#gc .pdot.cur{background:var(--color-text-info);box-shadow:0 0 0 3px var(--color-background-info)}
+#gc .goal{color:var(--color-text-secondary);line-height:1.6;margin:2px 0 0}
+#gc .toggles{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+#gc .why,#gc .hint{font-size:12.5px;margin:10px 0 0;line-height:1.6;display:none}
+#gc .why{color:var(--color-text-primary);background:var(--color-background-info);border-radius:var(--border-radius-md);padding:10px 12px}
+#gc .hint{font-family:var(--font-mono);color:var(--color-text-info)}
+#gc .pipe{display:flex;align-items:stretch;gap:6px;margin-bottom:12px}
+#gc .area{flex:1;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:9px 10px;min-height:70px}
+#gc .area .al{font-size:11px;color:var(--color-text-tertiary);margin:0 0 6px;display:flex;align-items:center;gap:5px}
+#gc .area .it{font-family:var(--font-mono);font-size:12px;margin:3px 0}
+#gc .area .em{font-size:11px;color:var(--color-text-tertiary);font-style:normal}
+#gc .arr{display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:10px;min-width:30px}
+#gc .graph{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;margin-bottom:12px}
+#gc .glane{display:flex;align-items:center;gap:10px;margin:7px 0}
+#gc .glh{width:78px;font-family:var(--font-mono);font-size:12px;display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+#gc .ghead{font-size:9px;background:var(--color-background-info);color:var(--color-text-info);padding:1px 6px;border-radius:20px;width:max-content}
+#gc .gnodes{display:flex;align-items:center;flex-wrap:wrap}
+#gc .gnode{min-width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;flex-shrink:0;padding:0 4px}
+#gc .gln{width:14px;height:2px;background:var(--color-border-secondary);flex-shrink:0}
+#gc .gleg{font-size:11px;color:var(--color-text-tertiary);margin-top:4px}
+#gc .remotes{display:flex;align-items:stretch;gap:6px;margin-bottom:12px}
+#gc .rbox{flex:1;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:9px 10px}
+#gc .rbox h4{font-size:12px;font-weight:500;margin:0;display:flex;align-items:center;gap:5px}
+#gc .rbox .rw{font-size:10px;color:var(--color-text-tertiary);margin:0 0 6px}
+#gc .term{background:#0d1117;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-secondary)}
+#gc #out{padding:11px 13px;font-family:var(--font-mono);font-size:12.5px;line-height:1.55;color:#c9d1d9;max-height:240px;overflow-y:auto;white-space:pre-wrap}
+#gc #out .u{color:#58a6ff}#gc #out .ok{color:#3fb950}#gc #out .er{color:#f85149}#gc #out .di{color:#8b949e}#gc #out .wn{color:#e3b341}
+#gc .pr{display:flex;align-items:center;gap:8px;padding:8px 13px;border-top:0.5px solid #21262d;background:#161b22}
+#gc .pr span{color:#3fb950;font-family:var(--font-mono);font-size:13px}
+#gc #cmd{flex:1;background:transparent;border:none;color:#e6edf3;font-family:var(--font-mono);font-size:13px;outline:none;padding:4px 0;min-height:0;height:auto}
+#gc .foot{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+#gc .foot .spacer{flex:1}
+#gc .foot .lnk{border:none;color:var(--color-text-tertiary);font-size:12px;padding:6px 4px}
+#gc .foot .lnk:hover{background:transparent;color:var(--color-text-secondary);text-decoration:underline}
+#gc #win{display:none;background:var(--color-background-success);border-radius:var(--border-radius-md);padding:12px 14px;margin-top:12px;color:var(--color-text-success);line-height:1.6}
+</style>
+
+<div class="map" id="map"></div>
+<p class="blurb" id="blurb"></p>
+
+<div class="mcard">
+  <div class="mtop">
+    <strong id="mtitle" style="font-weight:500"></strong>
+    <div class="pdots" id="pdots"></div>
+  </div>
+  <p class="goal" id="mgoal"></p>
+  <div class="toggles">
+    <button id="whyb" style="font-size:13px"><i class="ti ti-help-circle" aria-hidden="true"></i> What's this?</button>
+    <button id="hintb" style="font-size:13px"><i class="ti ti-bulb" aria-hidden="true"></i> Hint</button>
+  </div>
+  <p id="why" class="why"></p>
+  <p id="hint" class="hint"></p>
+</div>
+
+<div class="pipe">
+  <div class="area"><p class="al"><i class="ti ti-folder" aria-hidden="true"></i> working dir</p><div id="a-work"></div></div>
+  <div class="arr"><i class="ti ti-arrow-right" aria-hidden="true"></i>add</div>
+  <div class="area"><p class="al"><i class="ti ti-inbox" aria-hidden="true"></i> staging</p><div id="a-stage"></div></div>
+  <div class="arr"><i class="ti ti-arrow-right" aria-hidden="true"></i>commit</div>
+  <div class="area"><p class="al"><i class="ti ti-history" aria-hidden="true"></i> history</p><div id="a-hist"></div></div>
+</div>
+
+<div class="graph" id="graph" style="display:none"></div>
+<div class="remotes" id="remotes" style="display:none"></div>
+
+<div class="term">
+  <div id="out"></div>
+  <div class="pr"><span>$</span><input id="cmd" autocomplete="off" spellcheck="false" placeholder="type a command, then Enter  ·  try: help" aria-label="git command input"/></div>
+</div>
+
+<div class="foot">
+  <button id="actbtn" style="font-size:13px;display:none"></button>
+  <button id="resetb" style="font-size:13px"><i class="ti ti-refresh" aria-hidden="true"></i> Restart chapter</button>
+  <span class="spacer"></span>
+  <button id="unlockb" class="lnk"><i class="ti ti-lock-open" aria-hidden="true"></i> Unlock all chapters</button>
+  <button id="wipeb" class="lnk"><i class="ti ti-trash" aria-hidden="true"></i> Reset all progress</button>
+</div>
+
+<div id="win"></div>
+</div>
+
+<script>
+function sendPrompt(t){alert("In Claude Code this would ask:\n\n"+t)}
+(function(){
+var S,fb,prDone,cid,curCh=0,curM=0,maxUnlocked=0,maxCompleted=0,setupDone,startCh=0;
+var KEY='gitcourse.progress';
+
+// ---- persistence (localStorage, native; no library) ----
+function save(){try{localStorage.setItem(KEY,JSON.stringify({mu:maxUnlocked,mc:maxCompleted,cc:curCh}))}catch(e){}}
+function load(){try{var d=JSON.parse(localStorage.getItem(KEY)||'{}');if(typeof d.mu==='number')maxUnlocked=d.mu;if(typeof d.mc==='number')maxCompleted=d.mc;if(typeof d.cc==='number')startCh=d.cc}catch(e){}}
+
+function seed(f){if(S.working.indexOf(f)<0&&S.staging.indexOf(f)<0)S.working.push(f)}
+function hl(b){return (S.local[b]||[]).length}
+function newC(){cid++;return 'c'+cid}
+function blank(){return {HEAD:'main',local:{main:['c0']},working:[],staging:[],origin:{},upstream:{},tags:{},stash:[],reflog:[],conflict:false,fetched:false}}
+
+// ====================================================================
+//  CURRICULUM
+//  diff = difficulty 1-4 · show controls which visuals appear
+//  blurb = chapter intro · why = the friendly explainer per mission
+// ====================================================================
+var CH=[
+
+// ---------- ESSENTIALS ----------
+{sec:"Essentials",title:"Starting a repo",diff:1,show:{},
+ blurb:"Every project that uses git is a “repository” — a folder git is keeping an eye on. There are exactly two ways to get one: start a fresh one, or copy someone else's.",
+ onEnter:function(){S=blank();S.local={};S.inited=false;fb=null},
+ missions:[
+  {t:"Turn this folder into a repo",g:"You have a plain folder. Run init to let git start tracking it.",
+   why:"git init is like installing a security camera in a room you already own. Nothing changes about your files — git just quietly starts watching, ready to take snapshots when you ask. It creates a hidden .git folder; that's the camera. You do this once per project, ever.",
+   h:"git init",chk:function(c){return /^git\s+init/.test(c.trim())}},
+  {t:"Check the status",g:"See what git thinks of your brand-new, empty repo.",
+   why:"git status is the question you'll ask git more than any other: “so… where are we?” On a fresh repo it says “No commits yet” — the camera's on, but it hasn't taken a single photo. Get in the habit of running it constantly; it's free and it stops surprises.",
+   h:"git status",chk:function(c){return /^git\s+status/.test(c.trim())}},
+  {t:"(Or) copy an existing project",g:"The other way in: clone a project that already exists online.",
+   why:"git clone is “init + download everything + remember where I got it,” all in one. You use init when YOU are starting something; you use clone when you're joining something that already exists. Notice you didn't have to init after cloning — clone already did it for you.",
+   h:"git clone https://github.com/anthropics/courses.git",chk:function(c){return /^git\s+clone\s+\S/.test(c.trim())}}
+ ],
+ recap:"git init = start watching a folder · git status = “where are we?” · git clone URL = grab an existing project (init + download + remote, in one)."},
+
+{sec:"Essentials",title:"First commits",diff:1,show:{},
+ blurb:"A change moves through three places before it's saved forever: your working folder → the staging area → history. Let's push one change all the way through, then learn the shortcut.",
+ onEnter:function(){S=blank();fb=null},
+ missions:[
+  {t:"Check the status",g:"You edited notes.txt. Run status to see it waiting in your working folder.",
+   why:"Three areas, one analogy: your working folder is your messy desk, staging is the box you're packing, and history is the shelf of sealed, labelled boxes. Right now notes.txt is just sitting on the desk. status shows you exactly that.",
+   h:"git status",setup:function(){seed('notes.txt')},chk:function(c){return /^git\s+status/.test(c.trim())}},
+  {t:"Stage the change",g:"Move notes.txt into staging — you're choosing what goes in the next snapshot.",
+   why:"git add puts a file in the packing box. Why a box at all, instead of just saving everything? Because real edits are messy — you might fix a typo AND start a half-baked idea in the same afternoon. Staging lets you pack ONLY the typo fix. Variants: git add notes.txt (one file) · git add . (everything under the current folder — new files, edits AND deletions) · git add -A (the same, but across the whole repo no matter which subfolder you're standing in) · git add -p (review change-by-change — the surgeon's option).",
+   h:"git add notes.txt   (or git add .)",chk:function(){return S.staging.length>0}},
+  {t:"Commit it",g:"Seal and label the staged change as a permanent snapshot.",
+   why:"git commit tapes the box shut and writes on the lid. The -m \"...\" is that label — a note to future-you about what's inside. Write it for the confused human you'll be in six months, not for the computer. “fix login crash” good; “stuff” bad. Nothing is truly saved in git's memory until you commit.",
+   h:'git commit -m "edit notes"',chk:function(){return hl('main')>=2}},
+  {t:"Do the whole loop again",g:"You edited notes.txt again. Stage it, then commit it. This rhythm is 90% of using git.",
+   why:"edit → add → commit, over and over, forever. That's the heartbeat. The shortcut git commit -am \"msg\" does the add and commit in one breath — but ONLY for files git already knows about (brand-new files still need a plain git add first). Try either way.",
+   h:'git add . ; git commit -m "more notes"   (or git commit -am "more notes")',setup:function(){seed('notes.txt')},chk:function(){return hl('main')>=3}}
+ ],
+ recap:"add = pack the box (./-A/-p variants) · commit -m = seal + label it · commit -am = add + commit in one (tracked files only)."},
+
+{sec:"Essentials",title:"Looking around",diff:1,show:{},
+ blurb:"Before you change anything, you need to see things: what you've done (log), and what's different right now (diff). These two commands answer “what happened?” and “what did I just touch?”",
+ onEnter:function(){S=blank();S.local={main:['c0','c1','c2']};fb=null},
+ missions:[
+  {t:"Read the history",g:"Show the list of commits on this branch.",
+   why:"git log is your project's diary — every sealed box, newest first, with who/when/why. The full version is verbose, so people live in git log --oneline (one tidy line per commit) and git log --oneline --graph when branches are involved (it draws the tree in text). Try the plain one first.",
+   h:"git log",chk:function(c){return /^git\s+log/.test(c.trim())}},
+  {t:"The compact view",g:"Show the same history, but one line per commit.",
+   why:"--oneline is the view you'll actually use day to day. Same diary, no waffle. Pair it with --graph later and git will ASCII-draw your branches and merges for you.",
+   h:"git log --oneline",chk:function(c){return /^git\s+log\s+--oneline/.test(c.trim())}},
+  {t:"See your unsaved changes",g:"You've edited config.txt but not staged it. Show exactly what changed.",
+   why:"git diff is “spot the difference” between your desk and the last sealed box. Red lines left, green lines came. Crucial habit: run it right before git add so you actually know what you're about to pack. Plain git diff shows UNSTAGED changes only.",
+   h:"git diff",setup:function(){seed('config.txt')},chk:function(c){return /^git\s+diff(?!\s+--staged)/.test(c.trim())}},
+  {t:"See what's about to be committed",g:"Stage config.txt, then diff the staged version.",
+   why:"Here's the catch that trips up everyone: once you git add a file, plain git diff shows nothing — because there's no longer a difference between your desk and the box. To inspect what's IN the box, you need git diff --staged (also written --cached). Last look before you seal it.",
+   h:"git add config.txt ; git diff --staged",chk:function(c){return S.staging.indexOf('config.txt')>-1&&/^git\s+diff\s+--staged|^git\s+diff\s+--cached/.test(c.trim())}}
+ ],
+ recap:"log = the diary (--oneline / --graph to tidy it) · diff = unsaved changes · diff --staged = what's in the box, about to be committed."},
+
+{sec:"Essentials",title:"Branches & switching",diff:2,show:{branches:true,graph:true},
+ blurb:"A branch is a parallel universe for your code — a place to try things without touching the main timeline. You'll make one, work on it, hop between them, and clean up after. The graph below draws each branch as its own line.",
+ onEnter:function(){S=blank();S.local={main:['c0','c1']};fb=null},
+ missions:[
+  {t:"List your branches",g:"See what branches exist right now.",
+   why:"git branch with no arguments just lists them and stars the one you're standing on. “HEAD” is git's word for “you are here” — the branch your next commit will land on. Right now there's only main, and you're on it.",
+   h:"git branch",chk:function(c){return /^git\s+branch\s*$/.test(c.trim())}},
+  {t:"Create a branch and hop onto it",g:"Make a branch called feature and switch to it in one move.",
+   why:"git switch -c feature means “create (-c) this branch and step onto it.” You'll also see the older git checkout -b feature — identical result. Git split the overloaded old checkout into two clearer commands in 2019: switch (change branches) and restore (undo file changes). Both spellings still work; switch/restore are just less ambiguous. A branch is cheap — it's just a sticky note pointing at a commit, not a copy of your files.",
+   h:"git switch -c feature   (same as git checkout -b feature)",chk:function(){return S.HEAD!=='main'}},
+  {t:"Commit on the branch",g:"You edited app.txt. Stage and commit it — watch it land on feature, not main.",
+   why:"This is the whole point of branches: your new commit attaches to feature and leaves main untouched. In the graph, main stays put while feature grows. Experiment freely — main is safe.",
+   h:'git add . ; git commit -m "feature work"',setup:function(){seed('app.txt')},chk:function(){return S.HEAD!=='main'&&hl(S.HEAD)>hl('main')}},
+  {t:"Hop back to main",g:"Return to main and notice your feature commit isn't here.",
+   why:"Switching branches rewrites the files on your desk to match wherever you land — your feature work doesn't vanish, it's just safely tucked on the other branch. Handy shortcut: git switch - (a bare dash) jumps to the branch you were JUST on, like alt-tab for branches. git checkout - does the same.",
+   h:"git switch main",chk:function(){return S.HEAD==='main'}},
+  {t:"Delete the branch",g:"You're done with feature for now — delete it. (It isn't merged, so the safe delete will refuse.)",
+   why:"git branch -d is the polite delete: it REFUSES if the branch has commits you haven't merged anywhere, so you can't lose work by accident. git branch -D (capital, force) deletes regardless — “yes I really mean it, throw it away.” Since feature has unmerged work, you'll need the capital D here. Deleting a branch only removes the sticky note; the commits linger for a while (you'll meet reflog later).",
+   h:"git branch -D feature",chk:function(){return !S.local.feature}}
+ ],
+ recap:"branch = list · switch -c / checkout -b = create+move · switch - = back to previous · branch -d = safe delete, -D = force delete."},
+
+{sec:"Essentials",title:"Merging",diff:2,show:{branches:true,graph:true},
+ blurb:"Branching is only half the story — eventually good work needs to come home. Merging pulls one branch's commits into another. Key rule: only the branch you're STANDING ON changes.",
+ onEnter:function(){S=blank();S.local={main:['c0','c1'],feature:['c0','c1','f1','f2']};fb=null},
+ missions:[
+  {t:"A clean fast-forward",g:"You're on main. feature is just ahead of main. Merge it in.",
+   why:"Because main hasn't moved since feature branched off, git can just slide main's sticky note forward to catch up — a “fast-forward.” No new merge commit needed, the history stays a straight line. This is the easy, common case.",
+   h:"git merge feature",chk:function(){return S.local.feature.every(function(x){return S.local.main.indexOf(x)>-1})}},
+  {t:"A real merge commit",g:"Now both branches have moved apart. Merge hotfix into main and watch a merge commit appear.",
+   why:"When BOTH branches have new commits, git can't just slide — it ties them together with a special “merge commit” (the M node) that has two parents. That's normal and good; it records exactly when the two lines rejoined. Tip: git merge --no-ff forces this tidy merge-commit even when a fast-forward was possible — some teams like it because the branch's history stays visibly grouped.",
+   h:"git merge hotfix",setup:function(){S.local.main=['c0','c1','m3'];S.local.hotfix=['c0','c1','h1']},chk:function(){return (S.local.main.indexOf('h1')>-1)&&S.local.main.some(function(x){return x[0]==='M'})}}
+ ],
+ recap:"merge brings another branch INTO the one you're on · fast-forward = straight line · merge commit (M) ties two diverged lines · --no-ff forces a merge commit. See the bonus widget below for merge direction."},
+
+{sec:"Essentials",title:"Merge conflicts",diff:3,show:{branches:true,graph:true},
+ blurb:"The moment every beginner dreads, defused. A conflict just means two branches edited the SAME line and git refuses to guess which you meant. It's not an error — it's git asking you a polite question.",
+ onEnter:function(){S=blank();S.local={main:['c0','c1','mx'],feature:['c0','c1','fx']};S.conflict=false;fb=null},
+ missions:[
+  {t:"Trigger the conflict",g:"You're on main. Both main and feature changed the same line of title.txt. Try to merge.",
+   why:"Git tries, then stops and says CONFLICT. It edits the file to show BOTH versions stacked between <<<<<<< and >>>>>>> markers, with a ======= divider. It is NOT broken — it's handing you the decision: “I can't tell which line wins. You pick.” Take a breath; this is routine.",
+   h:"git merge feature",chk:function(){return S.conflict===true}},
+  {t:"Resolve and stage",g:"You edited title.txt to keep the right line and deleted the markers. Tell git it's resolved.",
+   why:"There's no magic “resolve” command — you open the file, delete the <<<<<<< ======= >>>>>>> markers, leave the lines you want, then git add the file to say “done, this one's settled.” Escape hatch: git merge --abort rewinds the whole thing as if you never tried, no harm done.",
+   h:"git add title.txt",chk:function(){return S.conflict==='resolved'}},
+  {t:"Seal the merge",g:"Commit to finish the merge.",
+   why:"One last commit records the resolved merge. (git often pre-fills the message for you — just save it.) Done: the two branches are joined, you chose the winning lines, and the scary red text is gone. You've now survived the thing everyone warns you about.",
+   h:'git commit -m "merge feature"',chk:function(){return S.conflict===false&&S.local.main.indexOf('fx')>-1}}
+ ],
+ recap:"Conflict = two branches touched the same line. Fix: edit file, remove the <<< === >>> markers, git add, git commit. Bail out anytime with git merge --abort."},
+
+{sec:"Essentials",title:"The undo button",diff:2,show:{branches:true,graph:true},
+ blurb:"Git's superpower is that almost nothing is permanent — IF you know the right undo. There's a different one for each “oops,” so let's learn them by the mess they clean up.",
+ onEnter:function(){S=blank();S.local={main:['c0','c1','c2']};fb=null},
+ missions:[
+  {t:"Unstage a file",g:"You staged secrets.txt by mistake. Take it back out of the box (don't lose the edits).",
+   why:"git restore --staged secrets.txt moves a file from staging back to your working folder — the edits are untouched, it's just no longer packed for the next commit. (Old spelling: git reset HEAD secrets.txt, same effect.) This is “I added the wrong file,” not “I want my changes gone.”",
+   h:"git restore --staged secrets.txt",setup:function(){seed('secrets.txt');S.staging.push(S.working.pop())},chk:function(){return S.staging.indexOf('secrets.txt')<0&&S.working.indexOf('secrets.txt')>-1}},
+  {t:"Throw away an edit",g:"You messed up draft.txt and want it back exactly as the last commit. Discard the change.",
+   why:"git restore draft.txt overwrites your working copy with the last committed version — your bad edit is GONE, no recycle bin. (Old spelling: git checkout -- draft.txt.) This one is genuinely destructive for unsaved work, so it's the one place to pause and be sure before you hit enter.",
+   h:"git restore draft.txt",setup:function(){seed('draft.txt')},chk:function(c){return /^git\s+restore\s+draft\.txt|^git\s+checkout\s+--\s+draft\.txt/.test(c.trim())&&S.working.indexOf('draft.txt')<0}},
+  {t:"Fix the last commit",g:"Your last commit message had a typo. Amend it instead of making a new commit.",
+   why:"git commit --amend rewrites the MOST RECENT commit — perfect for a typo in the message, or a file you forgot to include (stage it first, then amend). One golden rule: never amend a commit you've already pushed and shared, because amending makes a brand-new commit under the hood and your teammates still have the old one. Amend in private, push in public.",
+   h:'git commit --amend -m "better message"',chk:function(c){return /^git\s+commit\s+--amend/.test(c.trim())}},
+  {t:"Undo a whole commit (3 flavours)",g:"That last commit was premature. Roll it back but KEEP the changes staged, so you can redo it.",
+   why:"git reset moves the branch's sticky note backwards, and the flag decides what happens to the changes that were in the commit you reset past:\n• --soft → changes go back to STAGING (ready to re-commit) — use this now.\n• --mixed (the default) → changes go back to your WORKING folder (unstaged).\n• --hard → changes are DELETED. No undo. This is the chainsaw — powerful, occasionally exactly right, and the cause of most “oh no” moments. (Lost something to --hard anyway? The Recovery chapter has your back with reflog.)",
+   h:"git reset --soft HEAD~1",chk:function(){return hl('main')===2&&S.staging.length>0}}
+ ],
+ recap:"restore --staged = unstage · restore FILE = discard edit · commit --amend = fix last commit (private only) · reset --soft/--mixed/--hard = undo a commit, keeping/unstaging/destroying the changes."},
+
+{sec:"Essentials",title:"Ignoring files",diff:1,show:{},
+ blurb:"Some files should never be committed: passwords, giant build folders, OS clutter like .DS_Store. A file called .gitignore is git's bouncer — names on the list don't get in.",
+ onEnter:function(){S=blank();S.local={main:['c0']};S.ignored=false;fb=null},
+ missions:[
+  {t:"Spot the junk",g:"Your folder has app.txt (real) and debug.log (junk). Run status to see them both.",
+   why:"debug.log is a throwaway file your program spat out — nobody else needs it, and committing it just clutters everyone's history. Right now git wants to track it because git tracks everything by default. We need to tell it not to.",
+   h:"git status",setup:function(){seed('app.txt');seed('debug.log')},chk:function(c){return /^git\s+status/.test(c.trim())}},
+  {t:"Add it to .gitignore",g:"Use the button below to add debug.log to your .gitignore file.",
+   why:"A .gitignore is just a plain text file listing patterns to ignore — one per line, e.g. debug.log, or *.log for all log files, or node_modules/ for a whole folder. Once listed, git stops nagging about it and git add . will skip it. The .gitignore itself you DO commit, so the whole team shares the same bouncer list.",
+   h:"click “Add debug.log to .gitignore”",
+   action:{label:'<i class="ti ti-eye-off" aria-hidden="true"></i> Add debug.log to .gitignore',run:function(){var i=S.working.indexOf('debug.log');if(i>-1)S.working.splice(i,1);S.ignored=true;line("Added line to .gitignore:  debug.log",'ok');note("git now ignores debug.log. If it were ALREADY committed, you'd also run: git rm --cached debug.log (stop tracking it, but keep the file on disk).");}},
+   chk:function(){return S.ignored===true}},
+  {t:"Commit the real work only",g:"Stage everything and commit. Confirm debug.log stayed out.",
+   why:"git add . now grabs app.txt and the .gitignore, but skips debug.log because it's on the list. You committed only what matters. (Already tracking a file you now want gone? git rm --cached FILE untracks it while leaving it on your disk.)",
+   h:'git add . ; git commit -m "add app + ignore logs"',chk:function(){return hl('main')>=2&&S.working.indexOf('debug.log')<0}}
+ ],
+ recap:".gitignore lists files/patterns git should never track (secrets, build junk, *.log, node_modules/). Commit the .gitignore itself. Untrack an already-tracked file with git rm --cached."},
+
+{sec:"Essentials",title:"Going online",diff:2,show:{branches:true,remotes:true,graph:true},
+ blurb:"Everything so far lived on your laptop. “origin” is your project's copy on GitHub. push sends commits up; pull brings commits down. This is how git stops being a diary and becomes teamwork.",
+ onEnter:function(){S=blank();S.local={main:['c0','c1']};fb=null},
+ missions:[
+  {t:"See your remotes",g:"List the remote repos git knows about.",
+   why:"A “remote” is just a nickname for a repo living somewhere else (usually GitHub). git remote -v lists them with their URLs. “origin” is the conventional name for “the main copy I cloned from / push to.” It's a label, not magic — you could rename it, but everyone calls it origin, so don't.",
+   h:"git remote -v",chk:function(c){return /^git\s+remote/.test(c.trim())}},
+  {t:"Push to origin",g:"Upload your main branch to origin for the first time.",
+   why:"The -u in git push -u origin main is the bit worth understanding: it sets the “upstream” link, telling git “my local main belongs with origin's main.” You do it ONCE per branch. After that, a bare git push (and git pull) just knows where to go — no need to retype origin main every time. -u is short for --set-upstream.",
+   h:"git push -u origin main",chk:function(){return S.origin.main&&S.origin.main.length===S.local.main.length}},
+  {t:"Pull a teammate's change",g:"A teammate pushed commit T1 to origin. Bring it down onto your laptop.",
+   why:"git pull is two commands in a trench coat: git fetch (download new commits, touch nothing) followed by git merge (weave them into your branch). If you'd rather peek before merging, run git fetch yourself and look around first. pull is the everyday convenience; fetch is the cautious version.",
+   h:"git pull origin main   (or just git pull, thanks to -u)",setup:function(){S.origin.main=S.local.main.concat(['T1'])},chk:function(){return S.local.main.indexOf('T1')>-1}},
+  {t:"Pull, but keep history tidy",g:"Another commit T2 landed upstream while you had a local commit. Pull it with rebase to avoid a merge bubble.",
+   why:"When you AND the remote both have new commits, a plain pull makes a little merge commit — fine, but over time those bubbles clutter history. git pull --rebase instead replays YOUR commits neatly on top of the downloaded ones, keeping a straight line. Many teams set this as the default. (You'll learn rebase properly soon — this is a gentle preview.)",
+   h:"git pull --rebase origin main",setup:function(){S.local.main.push('mine');S.origin.main=['c0','c1','T1','T2']},chk:function(){return S.local.main.indexOf('T2')>-1}}
+ ],
+ recap:"remote -v = list remotes · push -u origin main = upload + link (once) · push/pull = up/down after that · fetch = download only · pull --rebase = tidy line instead of a merge bubble."},
+
+{sec:"Essentials",title:"Fork & contribute",diff:3,show:{branches:true,remotes:true,upstream:true,graph:true},
+ blurb:"The real open-source contribution flow. “upstream” is the ORIGINAL repo (say, Anthropic's). You can't push to it — you propose changes with a pull request. “origin” stays your own fork. Two remotes, two jobs.",
+ onEnter:function(){S=blank();S.local={main:['base']};S.origin={main:['base']};S.upstream={main:['base','U1']};fb=null;prDone=false},
+ missions:[
+  {t:"See both remotes",g:"List the repos git knows: origin (your fork) and upstream (the original).",
+   why:"In a fork workflow you keep TWO remotes. origin = your personal copy on GitHub (you can push here). upstream = the project you're contributing to (you can only read/pull here — they decide what gets in). Knowing which is which is the whole game.",
+   h:"git remote -v",chk:function(c){return /^git\s+remote/.test(c.trim())}},
+  {t:"Branch for your work",g:"Never contribute from main. Make a dedicated branch.",
+   why:"A focused branch (one branch = one idea = one pull request) keeps your proposal clean and easy to review. It also keeps your main pristine so you can sync it with upstream anytime. “Work on main” is the #1 beginner habit to drop here.",
+   h:"git switch -c add-skill",chk:function(){return S.HEAD!=='main'}},
+  {t:"Stage & commit",g:"You wrote skill.md. Commit it on your branch.",
+   why:"Same loop you already know — add, commit — just on your feature branch. Each commit is a tidy, reviewable step.",
+   h:'git add . ; git commit -m "add skill"',setup:function(){seed('skill.md')},chk:function(){return S.HEAD!=='main'&&hl(S.HEAD)>1}},
+  {t:"Push to YOUR fork",g:"Upload your branch to origin (your fork).",
+   why:"You push to origin because that's the repo you're allowed to write to. Your branch now lives on your GitHub fork, ready to be proposed. (You'd get rejected if you tried to push to upstream — by design.)",
+   h:"git push -u origin add-skill",chk:function(){return fb&&S.origin[fb]&&S.origin[fb].length===S.local[fb].length}},
+  {t:"Sync your main with upstream",g:"Upstream added commit U1. Get it into your local main: switch to main, then pull from upstream.",
+   why:"While you worked, the original project moved on. Pulling from upstream into your main keeps your fork from drifting into the past — do this regularly so your future branches start from current code. This is the step beginners forget, then wonder why everything conflicts.",
+   h:"git switch main ; git pull upstream main",chk:function(){return S.local.main.indexOf('U1')>-1}},
+  {t:"Open the pull request",g:"Propose your branch to the original project. Click the button.",
+   why:"A pull request is you knocking on the maintainers' door: “Here's my branch — want it?” They review, comment, maybe ask for tweaks, then merge (or not). It's a conversation, not a command. This is how virtually all collaborative code gets in, including to Anthropic's repos.",
+   h:"use the button below",
+   action:{label:'<i class="ti ti-git-pull-request" aria-hidden="true"></i> Open pull request',run:function(){if(!fb||!S.origin[fb]){note("push your branch to origin first.");return}prDone=true;line("Opened PR: you:"+fb+" → anthropics/main",'ok');}},
+   chk:function(){return prDone}}
+ ],
+ recap:"origin = your fork (you push here) · upstream = the original (you pull here, propose via PR) · branch → commit → push to origin → open PR · sync main from upstream often."},
+
+// ---------- ADVANCED ----------
+{sec:"Advanced",title:"Stash",diff:3,show:{branches:true,graph:true},
+ blurb:"The “oh no, the boss needs a fix RIGHT NOW” button. Stash shelves your half-done work so your desk is clean, lets you deal with the emergency, then hands your work back exactly as it was.",
+ onEnter:function(){S=blank();S.local={main:['c0','c1'],urgent:['c0','c1']};fb=null},
+ missions:[
+  {t:"Shelve your mess",g:"You're mid-edit on app.txt (not ready to commit) when an emergency hits. Stash it.",
+   why:"git stash sweeps your uncommitted changes (staged + unstaged) into a hidden drawer and gives you a clean working folder — without making a commit you'd be embarrassed by. Your edits aren't lost, just parked. (Add -u if you also want to stash brand-new untracked files.)",
+   h:"git stash",setup:function(){seed('app.txt')},chk:function(){return S.stash.length>0&&S.working.length===0}},
+  {t:"Check the drawer",g:"List what's currently stashed.",
+   why:"git stash list shows your shelved changes as stash@{0}, stash@{1}… (newest first). You can stash several times; it's a stack. Good to glance at so you don't forget you parked something.",
+   h:"git stash list",chk:function(c){return /^git\s+stash\s+list/.test(c.trim())}},
+  {t:"Get your work back",g:"Emergency handled. Bring your shelved edits back.",
+   why:"git stash pop reapplies your most recent stash AND removes it from the drawer — “give it back and forget it.” Prefer git stash apply if you want to keep a copy in the drawer just in case. Either way your half-done app.txt edits reappear right where you left them.",
+   h:"git stash pop",chk:function(){return S.stash.length===0&&S.working.length>0}}
+ ],
+ recap:"stash = park uncommitted work, clean desk · stash list = see the drawer · pop = bring back + remove · apply = bring back + keep · -u also stashes untracked files."},
+
+{sec:"Advanced",title:"Rebase & squash",diff:4,show:{branches:true,graph:true},
+ blurb:"Rebase rewrites history to make it tidy. Instead of merging (which records the messy truth), rebase REPLANTS your commits onto a newer base, as if you'd started from there all along. Powerful, and the one tool with a real safety rule.",
+ onEnter:function(){S=blank();S.local={main:['c0','c1','c2','c3'],feature:['c0','c1','f1','f2']};S.HEAD='feature';fb=null},
+ missions:[
+  {t:"Replant your branch",g:"You're on feature. main moved ahead (c2, c3) since you branched. Rebase feature onto the latest main.",
+   why:"git rebase main lifts feature's commits off their old base and re-applies them on top of main's newest commit — so feature now contains all of main's work plus yours, in one clean line, no merge bubble. The catch: rebasing gives your commits NEW identities (new hashes). That's why the golden rule is: never rebase commits you've already pushed and shared — you'd be rewriting history other people are standing on.",
+   h:"git rebase main",chk:function(){return S.local.feature.indexOf('c3')>-1&&S.local.feature.indexOf('f2')>-1}},
+  {t:"Squash messy commits into one",g:"Your branch has WIP commits like “oops” and “fix typo”. Squash them into a single clean commit.",
+   why:"git rebase -i (interactive) opens a to-do list of your recent commits where you can reorder, reword, or “squash” them — melting several scrappy commits into one polished one. Reviewers see a clean story (“add feature”) instead of your blow-by-blow (“wip”, “wip2”, “argh”). Same golden rule applies: only on commits you haven't shared yet.",
+   h:"git rebase -i HEAD~3",chk:function(c){return /^git\s+rebase\s+-i/.test(c.trim())}}
+ ],
+ recap:"rebase BASE = replant your commits onto a newer base (clean straight line) · rebase -i = reorder/reword/squash commits · GOLDEN RULE: never rebase commits you've already pushed."},
+
+{sec:"Advanced",title:"Cherry-pick",diff:4,show:{branches:true,graph:true},
+ blurb:"Sometimes you want ONE specific commit from another branch — not the whole thing. Cherry-pick is copy-paste for a single commit.",
+ onEnter:function(){S=blank();S.local={main:['c0','c1'],feature:['c0','c1','fixA','fancyB']};fb=null},
+ missions:[
+  {t:"Grab one commit",g:"feature has a bug fix (fixA) you need on main NOW — but the rest of feature isn't ready. You're on main. Cherry-pick just fixA.",
+   why:"git cherry-pick fixA takes the changes from that one commit and re-applies them as a NEW commit on your current branch. The rest of feature stays behind. Classic use: a hotfix made on a development branch that you urgently need on the release branch. Like merge, it can hit a conflict if the same lines differ — you'd resolve it the same way.",
+   h:"git cherry-pick fixA",chk:function(){return S.HEAD==='main'&&S.local.main.indexOf('fixA')>-1&&S.local.main.indexOf('fancyB')<0}}
+ ],
+ recap:"cherry-pick COMMIT = copy a single commit's changes onto your current branch as a new commit. Perfect for plucking one fix out of an unfinished branch."},
+
+{sec:"Advanced",title:"Force push without crying",diff:4,show:{branches:true,remotes:true,graph:true},
+ blurb:"After you rebase or amend, your local history no longer matches what's on the remote — and git will refuse a normal push. Forcing is how you overwrite the remote. It's a loaded gun; here's how to hold it safely.",
+ onEnter:function(){S=blank();S.local={main:['c0','c1','c2r']};S.origin={main:['c0','c1','c2']};fb=null},
+ missions:[
+  {t:"Watch a normal push get rejected",g:"You rebased main locally, so it diverged from origin. Try a plain push and read the rejection.",
+   why:"Git stops you with “! [rejected] non-fast-forward.” It's protecting you: your local history and the remote's have genuinely different commits, and a normal push would silently lose one side. Git won't guess — it makes you decide on purpose.",
+   h:"git push",chk:function(c){return /^git\s+push\s*$|^git\s+push\s+origin\s+main\s*$/.test(c.trim())}},
+  {t:"The reckless way (so you know the danger)",g:"Force the push the blunt way. See why it's risky.",
+   why:"git push --force (short: git push -f) says “make the remote match MY version, no questions.” It works — but if a teammate had pushed commits you hadn't downloaded yet, --force ERASES them with zero warning. This is the command behind most “who deleted my work?!” incidents. It has its place (a private branch only you touch), but it's a chainsaw.",
+   h:"git push --force   (a.k.a. git push -f)",chk:function(c){return /^git\s+push\s+(--force|-f)\b/.test(c.trim())&&!/lease/.test(c)}},
+  {t:"The safe way (use this one)",g:"Reset and force again — but this time with the seatbelt on.",
+   why:"git push --force-with-lease force-pushes ONLY if the remote still looks the way you last saw it. If a teammate pushed in the meantime, it ABORTS instead of steamrolling them — you get a warning, fetch their work, and nobody loses anything. Same power as --force, minus the friendly fire. Make it your default: if you ever force, force-with-lease.",
+   h:"git push --force-with-lease",chk:function(c){return /force-with-lease/.test(c)}}
+ ],
+ recap:"After rebase/amend the remote diverges → normal push is rejected. --force / -f overwrites blindly (can erase teammates' work). --force-with-lease overwrites ONLY if the remote hasn't changed since you fetched — always prefer it."},
+
+{sec:"Advanced",title:"Safe undo & recovery",diff:4,show:{branches:true,graph:true},
+ blurb:"Two lifesavers. revert undoes a commit WITHOUT rewriting history (safe on shared branches). reflog is git's surveillance tape — it remembers where you've been, so “lost” commits usually aren't lost at all.",
+ onEnter:function(){S=blank();S.local={main:['c0','c1','bad']};S.reflog=['bad: commit','c1: commit','c0: commit'];fb=null},
+ missions:[
+  {t:"Undo a shared commit the safe way",g:"Commit “bad” broke production and it's already pushed. Reverse its effect.",
+   why:"git revert doesn't delete the bad commit — it creates a NEW commit that is its mirror image, cancelling out the changes. History stays honest and intact, which is exactly what you want when others have already pulled the bad commit. Contrast with reset, which rewrites history — great in private, dangerous in public. Rule of thumb: reset for unshared mistakes, revert for shared ones.",
+   h:"git revert bad",chk:function(){return S.local.main.some(function(x){return x.indexOf('revert')>-1})}},
+  {t:"Recover a commit you “lost”",g:"You ran git reset --hard earlier and a good commit vanished. Find it again.",
+   why:"git reflog is git's private CCTV: every time HEAD moves — commit, switch, reset, rebase — it jots down where you were. So that commit “destroyed” by reset --hard? Its address is still right there in the reflog. Read off the id, then git reset --hard <id> (or git checkout <id>) to teleport back. This is why seasoned devs stay calm during git disasters: reflog almost always has a copy.",
+   h:"git reflog",chk:function(c){return /^git\s+reflog/.test(c.trim())}}
+ ],
+ recap:"revert = safe undo (a new commit that cancels an old one) — use on shared history · reset = rewrite history — private only · reflog = the time machine that finds commits you thought you destroyed."},
+
+{sec:"Advanced",title:"Tags & releases",diff:2,show:{branches:true,remotes:true,graph:true},
+ blurb:"Branches move; tags don't. A tag is a permanent bookmark on one specific commit — “this exact code is version 1.0.” That's how releases are marked.",
+ onEnter:function(){S=blank();S.local={main:['c0','c1','c2']};S.origin={main:['c0','c1','c2']};fb=null},
+ missions:[
+  {t:"Bookmark this commit",g:"This commit is your first release. Tag it v1.0.",
+   why:"git tag v1.0 sticks a permanent label on the current commit. Unlike a branch, a tag never moves — v1.0 will point at this exact snapshot forever, so anyone can check out the precise code you shipped. That bare form is a “lightweight” tag: just a name pinned to a commit.",
+   h:"git tag v1.0",chk:function(){return !!S.tags['v1.0']}},
+  {t:"Make a proper annotated tag",g:"Real releases use an annotated tag, which stores a message and author. Tag v1.1.",
+   why:"git tag -a v1.1 -m \"first stable release\" creates an annotated tag — it carries who made it, when, and a message, like a mini-commit for the release itself. Teams use annotated tags for anything official because they're richer and signable. Use lightweight tags for quick personal bookmarks, annotated for real releases.",
+   h:'git tag -a v1.1 -m "first stable release"',chk:function(){return !!S.tags['v1.1']}},
+  {t:"Push your tags",g:"Tags don't upload with a normal push. Send them to origin.",
+   why:"Surprise: git push does NOT send tags by default — a fresh tag stays local until you say otherwise. git push origin v1.1 pushes one tag; git push --tags pushes them all. Forget this and your shiny release tag is invisible to everyone else.",
+   h:"git push origin v1.1   (or git push --tags)",chk:function(c){return /^git\s+push\s+(origin\s+v|--tags)/.test(c.trim())}}
+ ],
+ recap:"tag NAME = permanent bookmark on a commit · tag -a NAME -m = annotated tag (message+author, for real releases) · push origin TAG / push --tags = tags don't upload on their own."}
+];
+
+// ====================================================================
+//  TERMINAL OUTPUT
+// ====================================================================
+function line(t,c){var o=document.getElementById('out'),d=document.createElement('div');if(c)d.className=c;d.innerHTML=t;o.appendChild(d);o.scrollTop=o.scrollHeight}
+function note(t){line("ℹ "+t,'di')}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function dots(a){return a.map(function(){return '●'}).join('')}
+
+// ====================================================================
+//  NAVIGATION
+// ====================================================================
+function goCh(i){
+ curCh=i;curM=0;setupDone=false;
+ S=blank();CH[i].onEnter();
+ cid=0;Object.keys(S.local).forEach(function(b){S.local[b].forEach(function(x){var n=parseInt(String(x).replace(/\D/g,''),10);if(n>cid)cid=n})});
+ save();
+ document.getElementById('out').innerHTML='';
+ document.getElementById('win').style.display='none';
+ document.getElementById('cmd').disabled=false;
+ document.getElementById('why').style.display='none';
+ document.getElementById('hint').style.display='none';
+ var ab=document.getElementById('actbtn');
+ line("<span class='u'>Chapter "+(i+1)+": "+CH[i].title+"</span>",'u');
+ line(CH[i].blurb,'di');
+ runSetup();syncAction();render();
+}
+function runSetup(){var m=CH[curCh].missions[curM];if(m&&m.setup&&!setupDone){m.setup();setupDone=true}}
+function syncAction(){
+ var m=CH[curCh].missions[curM],ab=document.getElementById('actbtn');
+ if(m&&m.action){ab.style.display='inline-flex';ab.innerHTML=m.action.label;ab.onclick=function(){m.action.run();render();check('')}}
+ else ab.style.display='none';
+}
+
+// ====================================================================
+//  RENDER
+// ====================================================================
+function render(){
+ var ch=CH[curCh],sh=ch.show;
+ // chapter map, grouped by section
+ var mp='',lastSec='';
+ CH.forEach(function(c,i){
+  if(c.sec!==lastSec){mp+='<div class="sech">'+c.sec+'</div>';lastSec=c.sec}
+  var locked=i>maxUnlocked,st=locked?'disabled':'',cls=i===curCh?'ch on':'ch';
+  var mark=i<maxCompleted?'<span class="cdone"><i class="ti ti-check" aria-hidden="true"></i> done</span>':(locked?'<i class="ti ti-lock" aria-hidden="true"></i> locked':'open');
+  mp+='<button class="'+cls+'" '+st+' data-ch="'+i+'"><span class="diff">'+'◆'.repeat(c.diff)+'</span><span class="cn">Ch '+(i+1)+' · '+mark+'</span><span class="ct">'+c.title+'</span></button>';
+ });
+ document.getElementById('map').innerHTML=mp;
+ document.querySelectorAll('#map .ch').forEach(function(b){b.onclick=function(){goCh(+b.dataset.ch)}});
+ document.getElementById('blurb').textContent=ch.blurb;
+
+ // pipeline (the three areas)
+ var work=document.getElementById('a-work');work.innerHTML=S.working.length?S.working.map(function(f){return '<div class="it" style="color:var(--color-text-warning)">'+f+'</div>'}).join(''):'<span class="em">clean</span>';
+ var stg=document.getElementById('a-stage');stg.innerHTML=S.staging.length?S.staging.map(function(f){return '<div class="it" style="color:var(--color-text-success)">'+f+'</div>'}).join(''):'<span class="em">empty</span>';
+ document.getElementById('a-hist').innerHTML='<div class="it" style="font-family:var(--font-mono);color:var(--color-text-info)">'+dots(S.local[S.HEAD]||[])+'</div><div class="it em">on '+S.HEAD+'</div>';
+
+ // commit graph (branch + advanced chapters)
+ var g=document.getElementById('graph');
+ if(sh.graph){g.style.display='block';drawGraph()}else g.style.display='none';
+
+ // remotes
+ var rm=document.getElementById('remotes');
+ if(sh.remotes){
+  rm.style.display='flex';
+  var cols=[{n:'local',w:'your laptop',ic:'ti-device-laptop',d:S.local.main||S.local[S.HEAD]},{n:'origin',w:'your fork',ic:'ti-git-fork',d:S.origin.main}];
+  if(sh.upstream)cols.push({n:'upstream',w:'the original',ic:'ti-brand-github',d:S.upstream.main});
+  rm.innerHTML=cols.map(function(c){return '<div class="rbox"><h4><i class="ti '+c.ic+'" aria-hidden="true"></i> '+c.n+'</h4><p class="rw">'+c.w+'</p><div class="it" style="font-family:var(--font-mono)">main <span style="color:var(--color-text-info)">'+(c.d?dots(c.d):'')+'</span>'+(c.d&&c.d.length?'':' <span class="em">empty</span>')+'</div></div>'}).join('');
+ } else rm.style.display='none';
+
+ // mission card
+ var pd='';CH[curCh].missions.forEach(function(_,i){pd+='<div class="pdot '+(i<curM?'done':i===curM?'cur':'')+'"></div>'});
+ document.getElementById('pdots').innerHTML=pd;
+ var m=CH[curCh].missions[curM];
+ if(m){
+  document.getElementById('mtitle').textContent='Mission '+(curM+1)+' · '+m.t;
+  document.getElementById('mgoal').textContent=m.g;
+  document.getElementById('why').textContent=m.why||'';
+  document.getElementById('hint').textContent=m.h;
+ }
+}
+
+function gcol(id){
+ if(String(id).indexOf('M')===0)return ['var(--color-background-success)','var(--color-text-success)'];      // merge
+ if(String(id).indexOf('revert')>-1)return ['var(--color-background-danger)','var(--color-text-danger)'];     // revert
+ if((S.local.main||[]).indexOf(id)>-1)return ['var(--color-background-secondary)','var(--color-text-secondary)']; // shared w/ main
+ return ['var(--color-background-warning)','var(--color-text-warning)'];                                       // branch-only
+}
+function drawGraph(){
+ var g=document.getElementById('graph');
+ var brs=Object.keys(S.local);
+ var html=brs.map(function(br){
+  var nodes=S.local[br].map(function(id,i){
+   var c=gcol(id),label=String(id).replace(/^c/,'').replace('revert','↺');
+   return (i?'<span class="gln"></span>':'')+'<span class="gnode" style="background:'+c[0]+';color:'+c[1]+'">'+label+'</span>';
+  }).join('');
+  return '<div class="glane"><div class="glh"><span>'+br+'</span>'+(br===S.HEAD?'<span class="ghead">◀ HEAD</span>':'')+'</div><div class="gnodes">'+nodes+'</div></div>';
+ }).join('');
+ html+='<div class="gleg">each ● is a commit · grey = shared with main · amber = this branch only · green = merge · HEAD = you are here</div>';
+ g.innerHTML=html;
+}
+
+// ====================================================================
+//  COMMAND SIMULATOR
+//  ponytail: concept-accurate, not byte-accurate git. Each handler does
+//  just enough to make the lesson land, plus a teaching note().
+// ====================================================================
+function run(raw){
+ var c=raw.trim();if(!c)return;
+ // ponytail: split chained commands like a real shell. Limitation: a ';'/'&&' inside a quoted commit message would mis-split — no course hint does that.
+ if(/;|&&/.test(c)){c.split(/\s*(?:;|&&)\s*/).forEach(function(p){if(p.trim())run(p)});return}
+ line("<span class='u'>$</span> "+esc(c));var m,name;
+
+ if(c==='help'){
+  line("Try these (type, then Enter):",'di');
+  line("  basics   git status · git add . · git commit -m \"..\" · git log [--oneline] · git diff [--staged]",'di');
+  line("  branch   git branch · git switch -c NAME · git switch NAME · git merge NAME · git branch -d/-D NAME",'di');
+  line("  undo     git restore [--staged] FILE · git reset --soft/--mixed/--hard · git commit --amend",'di');
+  line("  online   git remote -v · git push [-u/--force/--force-with-lease] · git pull [--rebase] · git fetch",'di');
+  line("  advanced git stash [pop] · git rebase [-i] · git cherry-pick · git revert · git reflog · git tag",'di');
+  line("  also     clear",'di');
+ }
+ else if(c==='clear'){document.getElementById('out').innerHTML=''}
+
+ // ---- starting a repo ----
+ else if(/^git\s+init/.test(c)){S.local={main:[]};S.inited=true;line("Initialized empty Git repository in ./.git/",'ok');note("git is now watching this folder. Nothing committed yet — run git status to see “No commits yet.”")}
+ else if(/^git\s+clone\s+\S/.test(c)){S.local={main:['c0','c1']};S.origin={main:['c0','c1']};line("Cloning into 'courses'...",'di');line("remote: counting objects: done.",'di');line("done — you now have a full copy + an 'origin' remote.",'ok');note("clone = init + download all history + remember the URL as 'origin', in one command.")}
+
+ // ---- status / log / diff / show ----
+ else if(/^git\s+status/.test(c)){
+  if(S.inited===false||(S.local.main&&S.local.main.length===0)){line("On branch main\nNo commits yet",'di')}
+  else line("On branch "+S.HEAD,'di');
+  if(S.conflict===true){line("You have unmerged paths (fix conflicts then git add):",'er');line("  both modified:  title.txt",'er')}
+  if(S.staging.length)line("Changes to be committed:  "+S.staging.join(', '),'ok');
+  if(S.working.length)line("Changes not staged:  "+S.working.join(', '),'er');
+  if(!S.staging.length&&!S.working.length&&S.conflict!==true&&!(S.local.main&&S.local.main.length===0))line("nothing to commit, working tree clean",'di');
+ }
+ else if(/^git\s+log\b/.test(c)){
+  var commits=(S.local[S.HEAD]||[]).slice().reverse();
+  if(!commits.length){line("no commits yet",'di')}
+  else if(/--oneline/.test(c)){commits.forEach(function(x){line(String(x).slice(0,7)+" commit "+x,'di')});note("--oneline = the everyday view. Add --graph to draw branches in text.")}
+  else commits.forEach(function(x){line("commit "+x+"\n  (author, date, message…)",'di')});
+ }
+ else if(/^git\s+diff\s+(--staged|--cached)/.test(c)){if(S.staging.length){line("diff — staged changes about to be committed:",'di');S.staging.forEach(function(f){line("  "+f+":  - old line\n           + new line",'ok')})}else line("(nothing staged to diff)",'di');note("diff --staged shows what's IN the box. Plain git diff shows what's still on your desk.")}
+ else if(/^git\s+diff\b/.test(c)){if(S.working.length){line("diff — unstaged changes in your working folder:",'di');S.working.forEach(function(f){line("  "+f+":  - old line\n           + new line",'wn')})}else line("(no unstaged changes — try git diff --staged)",'di')}
+ else if(/^git\s+show\b/.test(c)){var last=(S.local[S.HEAD]||[]).slice(-1)[0];line("commit "+(last||'—')+"\n  shows the full changes introduced by that one commit.",'di')}
+
+ // ---- staging ----
+ else if(/^git\s+add\b/.test(c)){
+  if(/\s-p\b/.test(c)){line("(interactive) stage this hunk? [y,n,q,?]",'di');note("git add -p walks you through each change so you stage only the bits you mean to.");}
+  else if(!S.working.length){line("nothing to add",'di')}
+  else{var f=c.replace(/^git\s+add\s*/,'').replace(/-A|--all/,'').trim();
+   if(f&&f!=='.'){var i=S.working.indexOf(f);if(i>-1){S.staging.push(S.working.splice(i,1)[0]);if(S.conflict===true)S.conflict='resolved';line("",'di')}else line("pathspec '"+f+"' did not match — try git add .",'er')}
+   else{S.staging=S.staging.concat(S.working);S.working=[];if(S.conflict===true)S.conflict='resolved';line("",'di')}
+   if(S.conflict==='resolved')note("conflict marked resolved — now git commit to finish the merge.");
+  }
+ }
+
+ // ---- undo: restore / reset / amend ----
+ else if(/^git\s+restore\s+--staged\s+\S/.test(c)){name=c.split(/\s+/).pop();var j=S.staging.indexOf(name);if(j>-1){S.working.push(S.staging.splice(j,1)[0]);line("unstaged "+name,'ok');note("file is back on your desk, edits intact — just not packed for the next commit.")}else line("not staged: "+name,'di')}
+ else if(/^git\s+restore\s+\S/.test(c)||/^git\s+checkout\s+--\s+\S/.test(c)){name=c.split(/\s+/).pop();var k=S.working.indexOf(name);if(k>-1){S.working.splice(k,1);line("restored "+name+" to last committed version",'ok');note("that working-folder edit is gone for good — restore overwrites with the committed version.")}else line("nothing to restore for "+name,'di')}
+ else if(/^git\s+reset\s+(--soft|--mixed|--hard)/.test(c)){
+  var mode=(c.match(/--(soft|mixed|hard)/)||[])[1];
+  if((S.local[S.HEAD]||[]).length>1){var popped=S.local[S.HEAD].pop();
+   if(mode==='soft'){S.staging.push(popped);line("HEAD moved back 1 — the commit's changes are back in STAGING.",'ok')}
+   else if(mode==='mixed'){S.working.push(popped);line("HEAD moved back 1 — changes are back in your WORKING folder (unstaged).",'ok')}
+   else{line("HEAD moved back 1 — changes DISCARDED.",'wn');note("--hard threw those changes away. If that was a mistake, the Recovery chapter's reflog can usually get them back.")}
+  }else line("nothing to reset past",'di')}
+ else if(/^git\s+reset\s+\S/.test(c)){name=c.replace(/^git\s+reset\s+(HEAD\s+)?/,'').trim();var z=S.staging.indexOf(name);if(z>-1){S.working.push(S.staging.splice(z,1)[0]);line("unstaged "+name,'ok')}else line("(reset) nothing staged named "+name,'di');note("git reset HEAD FILE is the old way to unstage — git restore --staged FILE is the modern wording.")}
+ else if(/^git\s+commit\s+--amend/.test(c)){if((S.local[S.HEAD]||[]).length){if(S.staging.length){S.staging=[]}line("amended the last commit (new message / folded-in changes).",'ok');note("--amend rewrites the most recent commit. Safe in private; never amend something you've already pushed.")}else line("no commit to amend",'er')}
+
+ // ---- commit ----
+ else if(/^git\s+commit\b/.test(c)){
+  if(S.conflict==='resolved'){S.conflict=false;S.staging=[];S.working=[];S.local[S.HEAD].push('M'+newC());if(S.local.main.indexOf('fx')<0)S.local.main.push('fx');line("Merge made — conflict resolved and committed.",'ok')}
+  else if(/-a(m|\s|$)/.test(c)&&S.working.length){S.staging=S.staging.concat(S.working);S.working=[];S.local[S.HEAD].push(newC());var n2=S.staging.length;S.staging=[];line("["+S.HEAD+" "+('c'+cid)+"] "+(c.match(/-m\s+"?([^"]*)"?/)||[,'commit'])[1],'ok');note("-am added tracked files AND committed in one step.")}
+  else if(!S.staging.length)line("nothing to commit (stage a file first with git add)",'er');
+  else{S.local[S.HEAD].push(newC());var n=S.staging.length;S.staging=[];line("["+S.HEAD+" "+('c'+cid)+"] "+(c.match(/-m\s+"?([^"]*)"?/)||[,'commit'])[1],'ok');line(" "+n+" file(s) changed",'di')}
+ }
+
+ // ---- branches ----
+ else if((m=c.match(/^git\s+(?:checkout\s+-b|switch\s+-c)\s+(\S+)/))){name=m[1];if(S.local[name])line("fatal: branch '"+name+"' already exists",'er');else{S.local[name]=S.local[S.HEAD].slice();S.prev=S.HEAD;S.HEAD=name;if(name!=='main')fb=name;line("Switched to a new branch '"+name+"'",'ok')}}
+ else if((m=c.match(/^git\s+branch\s+(-d|-D)\s+(\S+)/))){var force=m[1]==='-D';name=m[2];if(!S.local[name]){line("branch '"+name+"' not found",'er')}else if(name===S.HEAD){line("can't delete the branch you're on — switch away first",'er')}else{var merged=(S.local[name]||[]).every(function(x){return (S.local.main||[]).indexOf(x)>-1});if(!merged&&!force){line("error: branch '"+name+"' is not fully merged. Use -D to force.",'er')}else{delete S.local[name];line("Deleted branch "+name,'ok');note(force?"-D force-deleted it (its commits may now be unreachable — reflog could still find them).":"-d deleted it safely (it was fully merged).")}}}
+ else if(/^git\s+branch\s*$/.test(c))Object.keys(S.local).forEach(function(b){line((b===S.HEAD?'* ':'  ')+b,b===S.HEAD?'ok':null)});
+ else if((m=c.match(/^git\s+branch\s+(\S+)/))){name=m[1];if(!S.local[name]){S.local[name]=S.local[S.HEAD].slice();line("Created branch '"+name+"' (use git switch to move to it)",'ok')}else line("branch exists",'er')}
+ else if(/^git\s+(switch|checkout)\s+-\s*$/.test(c)){if(S.prev&&S.local[S.prev]){var t=S.HEAD;S.HEAD=S.prev;S.prev=t;line("Switched to branch '"+S.HEAD+"'",'ok');note("the bare dash jumps to the branch you were just on — alt-tab for branches.")}else line("no previous branch to switch to",'di')}
+ else if((m=c.match(/^git\s+(?:checkout|switch)\s+(\S+)/))){name=m[1];if(S.local[name]){S.prev=S.HEAD;S.HEAD=name;line("Switched to branch '"+name+"'",'ok')}else line("error: '"+name+"' did not match any branch",'er')}
+
+ // ---- merge ----
+ else if(/^git\s+merge\s+--abort/.test(c)){if(S.conflict){S.conflict=false;line("Merge aborted — back to where you started, no harm done.",'ok')}else line("no merge in progress",'di')}
+ else if((m=c.match(/^git\s+merge\s+(?:--no-ff\s+)?(\S+)/))){name=m[1];
+  if(!S.local[name]){line("merge: "+name+" - not something we can merge",'er')}
+  else{
+   var theirs=S.local[name],mine=S.local[S.HEAD];
+   var bothMoved=theirs.some(function(x){return mine.indexOf(x)<0})&&mine.some(function(x){return theirs.indexOf(x)<0});
+   var conflictPair=(name==='feature'&&S.HEAD==='main'&&mine.indexOf('mx')>-1&&theirs.indexOf('fx')>-1);
+   if(conflictPair){S.conflict=true;S.working.push('title.txt');line("Auto-merging title.txt",'di');line("CONFLICT (content): both changed the same line in title.txt",'er');line("Automatic merge failed; fix conflicts then git add + git commit.",'wn');note("Not broken! Open title.txt, delete the <<< === >>> markers, keep the lines you want, then git add it.")}
+   else{theirs.forEach(function(x){if(mine.indexOf(x)<0)mine.push(x)});if(bothMoved||/--no-ff/.test(c)){mine.push('M'+newC());line("Merge made by the 'ort' strategy — created a merge commit (M).",'ok')}else line("Fast-forward — "+S.HEAD+" slid forward to include "+name+".",'ok')}
+  }}
+
+ // ---- stash ----
+ else if(/^git\s+stash\s+list/.test(c)){if(S.stash.length)S.stash.forEach(function(s,i){line("stash@{"+i+"}: WIP on "+S.HEAD+": "+s,'di')});else line("(no stashes)",'di')}
+ else if(/^git\s+stash\s+(pop|apply)/.test(c)){if(!S.stash.length){line("No stash entries found.",'di')}else{var item=/pop/.test(c)?S.stash.shift():S.stash[0];S.working=S.working.concat(item.files);line((/pop/.test(c)?"Popped":"Applied")+" stash — your changes are back.",'ok');note(/pop/.test(c)?"pop also removed it from the drawer.":"apply kept a copy in the drawer (git stash drop to remove).")}}
+ else if(/^git\s+stash(\s+(push|-u|--include-untracked))?\s*$/.test(c)||/^git\s+stash\s+push/.test(c)){if(!S.working.length&&!S.staging.length){line("No local changes to save",'di')}else{S.stash.unshift({files:S.working.concat(S.staging)});S.working=[];S.staging=[];line("Saved working directory and index state — desk is clean.",'ok');note("your changes are parked. git stash pop brings them back.")}}
+
+ // ---- rebase ----
+ else if(/^git\s+rebase\s+-i/.test(c)){var b=S.local[S.HEAD];if(b.length>2){var keep=b.slice(0,b.length-2);keep.push('squash'+newC());S.local[S.HEAD]=keep}line("(interactive) pick / squash / reword … — commits melted into one.",'ok');note("rebase -i rewrites commits into a clean story. Only on commits you haven't pushed.")}
+ else if((m=c.match(/^git\s+rebase\s+(\S+)/))){name=m[1];if(!S.local[name]){line("invalid base: "+name,'er')}else{var base=S.local[name].slice(),mineOnly=S.local[S.HEAD].filter(function(x){return base.indexOf(x)<0});S.local[S.HEAD]=base.concat(mineOnly);line("Successfully rebased "+S.HEAD+" onto "+name+" — one clean line.",'ok');note("your commits were replanted on top of "+name+" (with new ids). Never do this to shared commits.")}}
+
+ // ---- cherry-pick ----
+ else if((m=c.match(/^git\s+cherry-pick\s+(\S+)/))){name=m[1];var src=null;Object.keys(S.local).forEach(function(b){if(S.local[b].indexOf(name)>-1)src=b});if(!src){line("bad revision '"+name+"'",'er')}else if(S.local[S.HEAD].indexOf(name)>-1){line("commit already on this branch",'di')}else{S.local[S.HEAD].push(name);line("[" +S.HEAD+"] cherry-picked "+name+" — copied as a new commit here.",'ok');note("just that one commit's changes came over; the rest of "+src+" stayed put.")}}
+
+ // ---- revert ----
+ else if((m=c.match(/^git\s+revert\s+(\S+)/))){name=m[1];if(S.local[S.HEAD].indexOf(name)<0){line("bad revision '"+name+"'",'er')}else{S.local[S.HEAD].push('revert-'+name);line("Created a new commit that undoes "+name+".",'ok');note("revert doesn't erase history — it adds an opposite commit. That's why it's safe on shared branches.")}}
+
+ // ---- reflog ----
+ else if(/^git\s+reflog/.test(c)){(S.reflog.length?S.reflog:['(current): here']).forEach(function(r,i){line("HEAD@{"+i+"}: "+r,'di')});note("every move HEAD makes is logged here. To recover a 'lost' commit: git reset --hard <its id>.")}
+
+ // ---- tags ----
+ else if((m=c.match(/^git\s+tag\s+-a\s+(\S+)/))){name=m[1];S.tags[name]=(S.local[S.HEAD]||[]).slice(-1)[0];line("Created annotated tag "+name+" (with message + author).",'ok');note("annotated tags are the standard for real releases — richer and signable.")}
+ else if((m=c.match(/^git\s+tag\s+(\S+)/))&&!/^-/.test(m[1])){name=m[1];S.tags[name]=(S.local[S.HEAD]||[]).slice(-1)[0];line("Created lightweight tag "+name+" — a permanent bookmark on this commit.",'ok')}
+ else if(/^git\s+tag\s*$/.test(c)){var tg=Object.keys(S.tags);if(tg.length)tg.forEach(function(t){line(t,'di')});else line("(no tags yet)",'di')}
+
+ // ---- remotes / push / pull / fetch ----
+ else if(/^git\s+remote/.test(c)){line("origin    https://github.com/you/project.git (fetch)");line("origin    ...(push)",'di');if(CH[curCh].show.upstream){line("upstream  https://github.com/anthropics/project.git (fetch)");line("upstream  ...(push)",'di')}}
+ else if(/^git\s+fetch/.test(c)){S.fetched=true;line("Fetched new commits — downloaded, nothing merged yet.",'ok');note("fetch is the cautious half of pull. Look around, then merge when ready.")}
+ else if(/^git\s+push.*(--force-with-lease)/.test(c)){name=fb||S.HEAD;S.origin[name]=S.local[name].slice();line("Force-pushed "+name+" (with lease) — remote updated safely.",'ok');note("succeeded because the remote hadn't changed since you fetched. If a teammate had pushed, this would have ABORTED instead of overwriting them.")}
+ else if(/^git\s+push.*(--force|\s-f(\s|$))/.test(c)){name=fb||S.HEAD;S.origin[name]=S.local[name].slice();line("Force-updated "+name+" — remote now matches your version.",'wn');note("DANGER: --force overwrote the remote with zero checks. If anyone had pushed work you didn't have, it's gone. Prefer --force-with-lease.")}
+ else if((m=c.match(/^git\s+push(?:\s+-u)?\s+\S+\s+(\S+)/))){name=m[1];if(/^v/.test(name)&&S.tags[name]){line("Pushed tag "+name+" to origin.",'ok');note("tags don't upload with a normal push — you have to send them explicitly.")}else if(!S.local[name]){line("src refspec "+name+" does not match any",'er')}else{var ff=!S.origin[name]||S.local[name].slice(0,S.origin[name].length).join()===S.origin[name].join();if(!ff){line("! [rejected]  "+name+" -> "+name+" (non-fast-forward)",'er');line("Updates were rejected — the remote has commits you don't. Pull, or force.",'wn')}else{S.origin[name]=S.local[name].slice();line("To origin — "+name+" -> "+name+(/-u/.test(c)?'  (upstream set)':''),'ok');if(/-u/.test(c))note("-u linked local "+name+" to origin/"+name+". From now, bare git push/pull just work.")}}}
+ else if(/^git\s+push\s+--tags/.test(c)){line("Pushed all tags to origin.",'ok')}
+ else if(/^git\s+push\s*$/.test(c)){name=S.HEAD;var ff2=!S.origin[name]||S.local[name].slice(0,(S.origin[name]||[]).length).join()===(S.origin[name]||[]).join();if(S.origin[name]&&!ff2){line("! [rejected]  (non-fast-forward)",'er');line("The remote has diverged from you. Pull --rebase, or force-with-lease.",'wn')}else if(S.origin[name]){S.origin[name]=S.local[name].slice();line("To origin — pushed "+name,'ok')}else line("no upstream set — try git push -u origin "+name,'di')}
+ else if(/^git\s+pull\s+--rebase/.test(c)){name=S.HEAD;var rem=(S.origin[name]||[]).slice();var mineO=S.local[name].filter(function(x){return rem.indexOf(x)<0});S.local[name]=rem.concat(mineO);line("Rebased your local commits on top of the latest "+name+" — straight line, no merge bubble.",'ok')}
+ else if(/^git\s+pull\s+upstream\s+main/.test(c)){S.fetched=true;S.local[S.HEAD]=S.upstream.main.slice();line("From upstream — Fast-forward into "+S.HEAD,'ok')}
+ else if((m=c.match(/^git\s+pull(?:\s+\S+)?\s+(\S+)/))||(m=/^git\s+pull\s*$/.test(c)?[,S.HEAD]:null)){name=m[1];if(S.origin[name]){S.local[name]=S.origin[name].slice();line("From origin — updated "+name+" (fetch + merge).",'ok')}else line("couldn't find remote ref "+name,'er')}
+
+ else line(esc(c.split(' ')[0])+": not a command I know here — type help",'er');
+
+ render();check(c);
+}
+
+// ====================================================================
+//  PROGRESS CHECKING
+// ====================================================================
+function check(c){
+ var ms=CH[curCh].missions;if(curM>=ms.length)return;
+ if(ms[curM].chk(c)){
+  line("✓ "+ms[curM].t+" — done",'ok');curM++;setupDone=false;
+  document.getElementById('why').style.display='none';document.getElementById('hint').style.display='none';
+  if(curM>=ms.length){chapterDone()}else{runSetup();syncAction();render();line("→ Next: "+ms[curM].t,'u')}
+ }
+}
+function chapterDone(){
+ if(curCh+1>maxUnlocked)maxUnlocked=curCh+1;
+ if(curCh+1>maxCompleted)maxCompleted=curCh+1;
+ save();render();
+ if(CH[curCh].recap)line("📝 Recap — "+CH[curCh].recap,'di');
+ if(curCh===CH.length-1){grad();return}
+ var w=document.getElementById('win');w.style.display='block';
+ w.innerHTML="<strong style='font-weight:500'><i class='ti ti-check' aria-hidden='true'></i> Chapter "+(curCh+1)+" complete!</strong> “"+CH[curCh+1].title+"” is unlocked.";
+ var b=document.createElement('button');b.style.marginTop='10px';b.style.fontSize='13px';b.innerHTML="Start chapter "+(curCh+2)+" →";b.onclick=function(){goCh(curCh+1)};
+ w.appendChild(document.createElement('br'));w.appendChild(b);
+}
+function grad(){
+ document.getElementById('cmd').disabled=true;
+ var w=document.getElementById('win');w.style.display='block';
+ w.innerHTML="<strong style='font-weight:500'><i class='ti ti-trophy' aria-hidden='true'></i> Course complete.</strong><br>You went from “what's a repo?” to rebasing, force-pushing safely, and recovering lost commits with the reflog. That's the whole toolkit — go build something.";
+}
+
+// ====================================================================
+//  WIRING
+// ====================================================================
+document.getElementById('cmd').addEventListener('keydown',function(e){if(e.key==='Enter'){run(this.value);this.value=''}});
+document.getElementById('whyb').onclick=function(){var h=document.getElementById('why');h.style.display=h.style.display==='none'?'block':'none'};
+document.getElementById('hintb').onclick=function(){var h=document.getElementById('hint');h.style.display=h.style.display==='none'?'block':'none'};
+document.getElementById('resetb').onclick=function(){goCh(curCh)};
+document.getElementById('unlockb').onclick=function(){maxUnlocked=CH.length-1;save();render();line("All chapters unlocked — jump anywhere from the map above.",'ok')};
+document.getElementById('wipeb').onclick=function(){if(confirm("Wipe all saved progress and start over from Chapter 1?")){try{localStorage.removeItem(KEY)}catch(e){}maxUnlocked=0;maxCompleted=0;startCh=0;goCh(0)}};
+
+load();
+goCh(Math.min(startCh,CH.length-1));
+})();
+</script>
+
+<hr style="border:none;border-top:0.5px solid var(--color-border-tertiary);margin:32px 0 24px">
+<h3 style="font-weight:500;margin:0 0 4px">Bonus · which way does merge go?</h3>
+<p style="color:var(--color-text-secondary);line-height:1.6;margin:0 0 16px;font-size:13.5px">Pick which branch you're standing on, then merge the other in. Only the branch you're <em>on</em> changes.</p>
+
+<div id="md">
+<style>
+#md .stage{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:14px}
+#md .lane{display:flex;align-items:center;gap:14px;margin:10px 0}
+#md .lh{width:86px;font-family:var(--font-mono);font-size:13px;display:flex;flex-direction:column;gap:3px}
+#md .head{font-size:10px;background:var(--color-background-info);color:var(--color-text-info);padding:1px 7px;border-radius:20px;width:max-content;font-family:var(--font-sans)}
+#md .nodes{display:flex;align-items:center}
+#md .node{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:13px;font-weight:500;flex-shrink:0}
+#md .ln{width:16px;height:2px;background:var(--color-border-secondary);flex-shrink:0}
+#md .dir{display:flex;align-items:center;justify-content:center;gap:6px;color:var(--color-text-secondary);font-size:12px;height:20px}
+#md .ctrls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+#md .ctrls .seg{display:flex;gap:6px}
+#md button.act{border:2px solid var(--color-border-info)}
+#md .cmd{font-family:var(--font-mono);font-size:13px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:9px 12px;margin-bottom:12px;color:var(--color-text-primary)}
+#md .cap{line-height:1.6;background:var(--color-background-info);border-radius:var(--border-radius-md);padding:11px 13px;color:var(--color-text-info)}
+#md .cap.ok{background:var(--color-background-success);color:var(--color-text-success)}
+#md .leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--color-text-secondary);margin-top:12px}
+#md .leg i{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:-1px;margin-right:4px}
+</style>
+
+<div class="ctrls">
+  <span style="font-size:13px;color:var(--color-text-secondary)">I'm on:</span>
+  <div class="seg">
+    <button id="b-main" style="font-size:13px">git checkout main</button>
+    <button id="b-feature" style="font-size:13px">git checkout feature</button>
+  </div>
+  <button id="b-merge" style="font-size:13px;margin-left:auto"><i class="ti ti-git-merge" aria-hidden="true"></i> <span id="mergelbl">merge</span></button>
+  <button id="b-mreset" style="font-size:13px"><i class="ti ti-refresh" aria-hidden="true"></i></button>
+</div>
+
+<div class="cmd" id="md-cmd"></div>
+
+<div class="stage">
+  <div class="lane"><div class="lh"><span>main</span><span class="head" id="h-main" style="display:none">◀ HEAD</span></div><div class="nodes" id="n-main"></div></div>
+  <div class="dir" id="md-dir"></div>
+  <div class="lane"><div class="lh"><span>feature</span><span class="head" id="h-feature" style="display:none">◀ HEAD</span></div><div class="nodes" id="n-feature"></div></div>
+  <div class="leg">
+    <span><i style="background:var(--color-background-secondary)"></i>shared</span>
+    <span><i style="background:var(--color-background-info)"></i>main-only</span>
+    <span><i style="background:var(--color-background-warning)"></i>feature-only</span>
+    <span><i style="background:var(--color-background-success)"></i>merge commit</span>
+  </div>
+</div>
+
+<div class="cap" id="md-cap"></div>
+</div>
+
+<script>
+(function(){
+var S;
+function init(){S={main:[['A','s'],['B','s'],['E','m']],feature:[['A','s'],['B','s'],['C','f'],['D','f']],HEAD:'main',done:false}}
+function col(k){return {s:['var(--color-background-secondary)','var(--color-text-secondary)'],m:['var(--color-background-info)','var(--color-text-info)'],f:['var(--color-background-warning)','var(--color-text-warning)'],x:['var(--color-background-success)','var(--color-text-success)']}[k]}
+function checkout(b){init();S.HEAD=b;render()}
+function reset(){var h=S?S.HEAD:'main';init();S.HEAD=h;render()}
+function merge(){
+ if(S.done)return;var other=S.HEAD==='main'?'feature':'main',tgt=S.HEAD;
+ var have={};S[tgt].forEach(function(n){have[n[0]]=1});
+ S[other].forEach(function(n){if(!have[n[0]])S[tgt].push([n[0],n[1]])});
+ S[tgt].push(['M','x']);S.done=true;render();
+}
+function lane(br){
+ var el=document.getElementById('n-'+br),html='';
+ S[br].forEach(function(n,i){var c=col(n[1]);if(i)html+='<span class="ln"></span>';
+  html+='<span class="node" style="background:'+c[0]+';color:'+c[1]+'">'+n[0]+'</span>'});
+ el.innerHTML=html;
+ document.getElementById('h-'+br).style.display=S.HEAD===br?'block':'none';
+}
+function render(){
+ lane('main');lane('feature');
+ var other=S.HEAD==='main'?'feature':'main';
+ document.getElementById('b-main').className=S.HEAD==='main'?'act':'';
+ document.getElementById('b-feature').className=S.HEAD==='feature'?'act':'';
+ document.getElementById('mergelbl').textContent='git merge '+other;
+ document.getElementById('b-merge').disabled=S.done;
+ document.getElementById('md-cmd').textContent='$ git checkout '+S.HEAD+'  &&  git merge '+other;
+ var dir=document.getElementById('md-dir');
+ if(S.HEAD==='main')dir.innerHTML='<i class="ti ti-arrow-up" aria-hidden="true"></i> feature\'s commits flow up into main';
+ else dir.innerHTML='<i class="ti ti-arrow-down" aria-hidden="true"></i> main\'s commits flow down into feature';
+ var cap=document.getElementById('md-cap');
+ if(!S.done){
+  cap.className='cap';
+  if(S.HEAD==='main')cap.innerHTML="<strong style='font-weight:500'>main</strong> will absorb feature. main changes; feature stays put. → Do this when feature is <strong style='font-weight:500'>finished</strong> and you're delivering it into the mainline.";
+  else cap.innerHTML="<strong style='font-weight:500'>feature</strong> will absorb main. feature changes; main stays put. → Do this when you're <strong style='font-weight:500'>still working</strong> and want your branch caught up with the latest main.";
+ } else {
+  cap.className='cap ok';
+  cap.innerHTML="<i class='ti ti-check' aria-hidden='true'></i> Merged. Only <strong style='font-weight:500'>"+S.HEAD+"</strong> grew — it now holds every commit plus a merge node (M). <strong style='font-weight:500'>"+other+"</strong> is unchanged. Switch to the other branch to try the opposite direction.";
+ }
+}
+document.getElementById('b-main').onclick=function(){checkout('main')};
+document.getElementById('b-feature').onclick=function(){checkout('feature')};
+document.getElementById('b-merge').onclick=merge;
+document.getElementById('b-mreset').onclick=reset;
+init();render();
+})();
+</script>
