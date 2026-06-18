@@ -1,0 +1,15 @@
+{
+  "name": "Git Course — learn by doing",
+  "short_name": "Git Course",
+  "description": "Learn git and GitHub by doing, in an interactive terminal.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ecebe4",
+  "theme_color": "#185fa5",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

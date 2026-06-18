@@ -2,6 +2,12 @@
 <meta charset="utf-8">
 <title>Git course — learn by doing</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#185fa5">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Git Course">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.31.0/tabler-icons.min.css">
 <style>
 :root{
@@ -804,4 +810,9 @@ document.getElementById('b-merge').onclick=merge;
 document.getElementById('b-mreset').onclick=reset;
 init();render();
 })();
+</script>
+
+<script>
+// PWA: register the service worker so the app installs and works offline.
+if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
 </script>
