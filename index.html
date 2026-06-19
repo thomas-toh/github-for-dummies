@@ -103,6 +103,30 @@ input{font-family:inherit}
 #gc .expl .ew{margin:3px 0;color:var(--color-text-warning)}
 #gc .expl .erc{margin:5px 0 2px;color:var(--color-text-success);font-weight:500}
 #gc .expl .erp{margin:5px 0 2px;color:var(--color-text-info)}
+#gc .mcard{position:relative}
+#gc .mtop{align-items:flex-start}
+#gc .mnav{display:flex;align-items:center;gap:6px;flex-shrink:0}
+#gc .navx{font-size:14px;line-height:1;padding:1px 8px;border-radius:var(--border-radius-md)}
+#gc .navx:disabled{opacity:.3}
+#gc .navc{font-size:11px;padding:3px 9px;border-radius:20px}
+#gc .navmenu{display:none;position:absolute;right:16px;top:44px;z-index:5;background:var(--color-background-primary);border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:5px;min-width:200px;box-shadow:0 8px 28px rgba(0,0,0,.2)}
+#gc .navmi{display:block;width:100%;text-align:left;border:none;background:transparent;padding:6px 8px;font-size:12.5px;border-radius:6px;color:var(--color-text-primary)}
+#gc .navmi:hover{background:var(--color-background-secondary)}
+#gc .navmi.on{background:var(--color-background-info)}
+#gc .navmi .nm{display:inline-block;width:14px;color:var(--color-text-tertiary)}
+#gc .lay{margin:10px 0 0;line-height:1.6;font-size:14px;color:var(--color-text-primary)}
+#gc .tech{margin:9px 0 0;line-height:1.6;font-size:13px;color:var(--color-text-secondary)}
+#gc .syn{margin:12px 0 0;background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
+#gc .synline{font-size:13.5px;line-height:2}
+#gc .mcard code{font-family:var(--font-mono);font-size:12.5px;color:var(--color-text-info);background:var(--color-background-secondary);border-radius:5px;padding:1.5px 6px}
+#gc .ph{font-family:var(--font-mono);font-size:12.5px;font-style:italic;color:var(--color-text-tertiary)}
+#gc .synparts{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+#gc .synparts li{font-size:12.5px;line-height:1.55;color:var(--color-text-secondary)}
+#gc .synparts .sx{color:var(--color-text-tertiary)}
+#gc .goalrow{margin:12px 0 0;background:var(--color-background-success);border-radius:var(--border-radius-md);padding:9px 12px;font-size:14px;line-height:1.5}
+#gc .goalk{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--color-text-success);font-weight:700;margin-bottom:3px}
+#gc .goalv{color:var(--color-text-primary)}
+#gc .contb{display:inline-block;margin-top:10px;font-size:13px;background:var(--color-background-success);border-color:var(--color-text-success);color:var(--color-text-success)}
 </style>
 
 <div class="map" id="map"></div>
@@ -111,14 +135,10 @@ input{font-family:inherit}
 <div class="mcard">
   <div class="mtop">
     <strong id="mtitle" style="font-weight:500"></strong>
-    <div class="pdots" id="pdots"></div>
+    <div class="mnav" id="mnav"></div>
   </div>
-  <div class="mfields">
-    <div class="mrow"><span class="mk">Goal</span><span class="mv" id="mgoal"></span></div>
-    <div class="mrow"><span class="mk">What it does</span><span class="mv" id="mdef"></span></div>
-    <div class="mrow" id="msyntaxrow"><span class="mk">Syntax</span><span class="mv mono" id="msyntax"></span></div>
-    <div class="mrow"><span class="mk">Do this</span><span class="mv mono" id="mdo"></span></div>
-  </div>
+  <div class="navmenu" id="navmenu"></div>
+  <div id="mbody"></div>
   <div class="expl" id="expl"></div>
 </div>
 
@@ -172,59 +192,61 @@ function blank(){return {HEAD:'main',local:{main:['c0']},working:[],staging:[],o
 var CH=[
 
 // ---------- ESSENTIALS ----------
-{sec:"Essentials",title:"Starting a repo",diff:1,show:{},
- blurb:"Every project that uses git is a “repository” — a folder git is keeping an eye on. There are exactly two ways to get one: start a fresh one, or copy someone else's.",
+{sec:"Essentials",title:"Starting a repo",diff:1,show:{},selfContained:true,
+ blurb:"Every project that uses git is a “repository” — a folder git keeps an eye on. There are two ways to get one: start a fresh repo, or copy an existing one.",
  onEnter:function(){S=blank();S.local={};S.inited=false;fb=null},
  missions:[
   {t:"Turn this folder into a repo",
-   g:"You have a plain folder. Make git start tracking it.",
-   def:"git init creates a brand-new, empty git repository in the folder you're in. Concretely, it makes a hidden “.git” sub-folder where git will store every snapshot and all your history. Your existing files aren't touched — git just starts watching, ready to take snapshots when you ask. You run it once per project, ever.",
-   syntax:"git init   —   takes no arguments; it acts on your current folder",
-   do:"git init",
+   lay:"git init turns the plain folder you're in into something git watches. You run it once, right at the start of a project — after that, git can save snapshots of your work whenever you ask.",
+   tech:"Technically it creates a hidden “.git” sub-folder inside the current directory. That folder is where git stores every commit, branch and scrap of history; your own files are left exactly as they were.",
+   syntax:[{t:"git init",k:"cmd",note:"the whole command — it takes no arguments and just acts on the folder you're currently in"}],
+   goal:"Initialise a git repository in this folder.",
    chk:function(c){return /^git\s+init/.test(c.trim())}},
   {t:"Check the status",
-   g:"See what git makes of your brand-new, empty repo.",
-   def:"git status shows the current state of your repository: which branch you're on, which files have changed, and which of those changes are staged for the next commit. It changes nothing, so it's safe to run any time — on a fresh repo it just reports “No commits yet.” You'll lean on it constantly.",
-   syntax:"git status   —   takes no arguments",
-   do:"git status",
+   lay:"git status is the question you'll ask git most often: “where are we?” It tells you what has changed and what's ready to be saved, and it never changes anything itself — so it's always safe to run.",
+   tech:"It reports the branch you're on plus the state of your files across the working directory and the staging area. On a brand-new repo it simply says “No commits yet.”",
+   syntax:[{t:"git status",k:"cmd",note:"takes no arguments"}],
+   goal:"Check the status of your new, empty repository.",
+   setup:function(){S.local={main:[]};S.inited=true},
    chk:function(c){return /^git\s+status/.test(c.trim())}},
   {t:"Or: copy an existing project",
-   g:"The other way to get a repo — copy one that already exists online.",
-   def:"git clone copies a repository that already exists somewhere else (usually on GitHub) onto your computer. It downloads every file plus the complete history into a new folder, sets up a link back to the source (which it names “origin”), and checks out the default branch so you're ready to work. In short: it's init + download everything + remember where it came from.",
-   syntax:"git clone <url> [<folder>]   —   one required argument, the repo's URL; folder name optional",
-   do:"git clone https://github.com/anthropics/courses.git",
+   lay:"git clone makes your own copy of a project that already lives somewhere else — usually on GitHub. You use init to start a project from scratch, and clone to join one that already exists.",
+   tech:"It downloads every file and the project's complete history into a new folder, sets up a link back to the source (which git names “origin”), and checks out the default branch so you're ready to work. In effect: init + download everything + remember the source.",
+   syntax:[{t:"git clone",k:"cmd"},{t:"<url>",k:"arg",note:"required — the repository's web address, e.g. https://github.com/anthropics/courses.git"},{t:"[<folder>]",k:"arg",note:"optional — a name for the new folder; defaults to the repo's own name"}],
+   goal:"Clone the project at https://github.com/anthropics/courses.git onto your computer.",
+   setup:function(){S.local={};S.inited=false},
    chk:function(c){return /^git\s+clone\s+\S/.test(c.trim())}}
  ],
- recap:"git init = start watching a folder · git status = “where are we?” · git clone URL = grab an existing project (init + download + remote, in one)."},
+ recap:"git init = start a repo from scratch · git status = “where are we?” · git clone <url> = copy a repo that already exists."},
 
-{sec:"Essentials",title:"First commits",diff:1,show:{},
- blurb:"A change moves through three places before it's saved forever: your working folder → the staging area → history. Let's push one change all the way through, then learn the shortcut.",
+{sec:"Essentials",title:"First commits",diff:1,show:{},selfContained:true,
+ blurb:"A change moves through three places before it's saved for good: your working folder → the staging area → committed history. Let's push one change all the way through, then learn the shortcut.",
  onEnter:function(){S=blank();fb=null},
  missions:[
   {t:"Check the status",
-   g:"You edited notes.txt. See it sitting in your working folder.",
-   def:"git status reports what has changed and which of git's three areas each change is in: your working directory (edits you've made), the staging area (changes lined up for the next commit), and committed history. Right now notes.txt shows up as changed but “not staged”.",
-   syntax:"git status   —   takes no arguments",
-   do:"git status",
+   lay:"You've edited notes.txt. git status shows you that the change exists but hasn't been saved yet — it's sitting in your working folder, “not staged”.",
+   tech:"git status groups changes by which of git's three areas they're in: the working directory (edits you've made), the staging area (changes lined up for the next commit), and committed history.",
+   syntax:[{t:"git status",k:"cmd",note:"takes no arguments"}],
+   goal:"Run a status check to see notes.txt waiting in your working folder.",
    setup:function(){seed('notes.txt')},chk:function(c){return /^git\s+status/.test(c.trim())}},
   {t:"Stage the change",
-   g:"Move notes.txt into the staging area — you're picking what goes in the next snapshot.",
-   def:"git add stages changes: it copies the current state of the files you name into the staging area, marking them for the next commit. It doesn't save anything permanently yet — it just chooses what the next snapshot will contain. Common forms: git add <file> (one file) · git add . (everything under the current folder) · git add -A (everything across the whole repo) · git add -p (approve changes one chunk at a time).",
-   syntax:"git add <file>...   —   one or more file paths (or . for everything here)",
-   do:"git add notes.txt",
-   chk:function(){return S.staging.length>0}},
+   lay:"Staging is you choosing what goes into the next snapshot. git add copies notes.txt into the staging area so it'll be included when you commit — nothing is permanently saved yet, you're just lining it up.",
+   tech:"git add records the current contents of the files you name in the staging area (git's “index”). Common forms: a single file, “.” for everything in the current folder, “-A” for the whole repo, or “-p” to approve changes one chunk at a time.",
+   syntax:[{t:"git add",k:"cmd"},{t:"<file>",k:"arg",note:"the path to stage — or “.” for everything in this folder, “-A” for the whole repo, “-p” to choose chunk by chunk"}],
+   goal:"Stage notes.txt for the next commit.",
+   setup:function(){seed('notes.txt')},chk:function(){return S.staging.length>0}},
   {t:"Commit it",
-   g:"Save the staged change as a permanent snapshot.",
-   def:"git commit takes everything currently in the staging area and records it as a new commit — a permanent, labelled snapshot in your project's history. The -m option attaches a short message describing the change (leave it off and git opens an editor for one). Nothing is truly saved in history until you commit.",
-   syntax:"git commit -m \"<message>\"   —   -m takes one argument: your message, in quotes",
-   do:"git commit -m \"edit notes\"",
-   chk:function(){return hl('main')>=2}},
-  {t:"Do the whole loop again",
-   g:"You edited notes.txt again. Stage it, then commit it — this rhythm is 90% of using git.",
-   def:"The everyday cycle is edit → add → commit, over and over. The shortcut git commit -am \"<msg>\" does the add and the commit in one step — but only for files git already tracks (brand-new files still need a plain git add first).",
-   syntax:"git add .   then   git commit -m \"<message>\"   (or combined: git commit -am \"<message>\")",
-   do:"git add . ; git commit -m \"more notes\"",
-   setup:function(){seed('notes.txt')},chk:function(){return hl('main')>=3}}
+   lay:"A commit is a permanent, labelled snapshot of everything you've staged. git commit seals notes.txt into history with a short message, so future-you knows what changed.",
+   tech:"git commit records whatever is in the staging area as a new commit. The -m flag attaches the message inline; leave it off and git opens a text editor for you to write one. Nothing reaches history until you commit.",
+   syntax:[{t:"git commit",k:"cmd"},{t:"-m",k:"flag",note:"short for “message” — write the commit message right here instead of opening an editor"},{t:"\"<message>\"",k:"arg",note:"you replace this — a short description of the change, in quotes"}],
+   goal:"Commit your staged change with the message “edit notes”.",
+   setup:function(){seed('notes.txt');S.staging.push(S.working.pop())},chk:function(){return hl('main')>=2}},
+  {t:"Do the whole loop again",cmd:"git add + commit",
+   lay:"That edit → add → commit cycle is the heartbeat of git — you'll do it thousands of times. This time, do both steps yourself.",
+   tech:"The shortcut git commit -am \"<msg>\" stages and commits in one move — but only for files git already tracks; brand-new files still need a plain git add first.",
+   syntax:[{t:"git add .",k:"cmd"},{t:";",k:"arg",note:"runs the next command after this one (or just press Enter between the two commands)"},{t:"git commit",k:"cmd"},{t:"-m",k:"flag"},{t:"\"<message>\"",k:"arg",note:"your message — or use git commit -am \"…\" to do add + commit together"}],
+   goal:"Stage notes.txt and commit it (any message). You've now done the full loop on your own.",
+   setup:function(){S.local={main:['c0','c1']};seed('notes.txt')},chk:function(){return hl('main')>=3}}
  ],
  recap:"add = pack the box (./-A/-p variants) · commit -m = seal + label it · commit -am = add + commit in one (tracked files only)."},
 
@@ -480,10 +502,11 @@ function dots(a){return a.map(function(){return '●'}).join('')}
 //  NAVIGATION
 // ====================================================================
 function goCh(i){
- curCh=i;curM=0;setupDone=false;
+ curCh=i;curM=0;setupDone=false;save();
+ document.getElementById('navmenu').style.display='none';
+ if(CH[i].selfContained){enterMission(0);return}
  S=blank();CH[i].onEnter();
  cid=0;Object.keys(S.local).forEach(function(b){S.local[b].forEach(function(x){var n=parseInt(String(x).replace(/\D/g,''),10);if(n>cid)cid=n})});
- save();
  document.getElementById('out').innerHTML='';
  var ex=document.getElementById('expl');ex.innerHTML='';ex.style.display='none';
  document.getElementById('win').style.display='none';
@@ -533,18 +556,62 @@ function render(){
  } else rm.style.display='none';
 
  // mission card
- var pd='';CH[curCh].missions.forEach(function(_,i){pd+='<div class="pdot '+(i<curM?'done':i===curM?'cur':'')+'"></div>'});
- document.getElementById('pdots').innerHTML=pd;
- var m=CH[curCh].missions[curM];
+ var mch=CH[curCh],m=mch.missions[curM],sc=!!mch.selfContained;
  if(m){
   document.getElementById('mtitle').textContent='Mission '+(curM+1)+' · '+m.t;
-  document.getElementById('mgoal').textContent=m.g;
-  document.getElementById('mdef').textContent=m.def||m.why||'';
-  var syn=m.syntax||'';document.getElementById('msyntax').textContent=syn;
-  document.getElementById('msyntaxrow').style.display=syn?'flex':'none';
-  document.getElementById('mdo').textContent=m.do||m.h||'';
+  renderNav(mch,sc);
+  document.getElementById('mbody').innerHTML=missionBody(m);
  }
 }
+
+function tok(p){var t=esc(p.t);return p.k==='arg'?'<span class="ph">'+t+'</span>':'<code>'+t+'</code>'}
+function skeleton(a){return a.map(tok).join(' ')}
+function missionBody(m){
+ if(m.lay||m.tech){
+  var h='';
+  if(m.lay)h+='<p class="lay">'+esc(m.lay)+'</p>';
+  if(m.tech)h+='<p class="tech">'+esc(m.tech)+'</p>';
+  if(m.syntax&&m.syntax.length){h+='<div class="syn"><div class="synline">'+skeleton(m.syntax)+'</div>';
+   var notes=m.syntax.filter(function(p){return p.note});
+   if(notes.length)h+='<ul class="synparts">'+notes.map(function(p){return '<li>'+tok(p)+' <span class="sx">—</span> '+esc(p.note)+'</li>'}).join('')+'</ul>';
+   h+='</div>';}
+  if(m.goal)h+='<div class="goalrow"><span class="goalk">Your goal</span><span class="goalv">'+esc(m.goal)+'</span></div>';
+  return h;
+ }
+ var hb='';
+ if(m.def||m.why)hb+='<p class="lay">'+esc(m.def||m.why)+'</p>';
+ if(m.g)hb+='<div class="goalrow"><span class="goalk">Goal</span><span class="goalv">'+esc(m.g)+'</span></div>';
+ if(m.do||m.h)hb+='<p class="tech" style="margin-top:9px">Try: <code>'+esc(m.do||m.h)+'</code></p>';
+ return hb;
+}
+function missionCmd(m){return m.cmd||(m.syntax&&m.syntax[0]&&m.syntax[0].t)||(m.do||m.h||'').replace(/\s*\(.*$/,'').split(/\s+/).slice(0,2).join(' ')}
+function renderNav(ch,sc){
+ var nav=document.getElementById('mnav'),menu=document.getElementById('navmenu'),n=ch.missions.length,dots='',i;
+ for(i=0;i<n;i++)dots+='<span class="pdot '+(i<curM?'done':i===curM?'cur':'')+'"></span>';
+ if(sc){
+  nav.innerHTML='<button class="navx" id="navprev"'+(curM<=0?' disabled':'')+'>‹</button><span class="pdots">'+dots+'</span><button class="navx" id="navnext"'+(curM>=n-1?' disabled':'')+'>›</button><button class="navc" id="navc">contents ▾</button>';
+  document.getElementById('navprev').onclick=function(){if(curM>0)goMission(curM-1)};
+  document.getElementById('navnext').onclick=function(){if(curM<n-1)goMission(curM+1)};
+  document.getElementById('navc').onclick=function(){menu.style.display=menu.style.display==='block'?'none':'block'};
+  menu.innerHTML=ch.missions.map(function(mi,j){return '<button class="navmi'+(j===curM?' on':'')+'" data-k="'+j+'"><span class="nm">'+(j<curM?'✓':j===curM?'◉':'○')+'</span> '+(j+1)+' · <code>'+esc(missionCmd(mi))+'</code></button>'}).join('');
+  menu.querySelectorAll('.navmi').forEach(function(b){b.onclick=function(){menu.style.display='none';goMission(+b.dataset.k)}});
+ }else{
+  nav.innerHTML='<span class="pdots">'+dots+'</span>';
+  menu.style.display='none';menu.innerHTML='';
+ }
+}
+function enterMission(k){
+ var ch=CH[curCh];curM=k;setupDone=true;
+ S=blank();ch.onEnter();var mm=ch.missions[k];if(mm.setup)mm.setup();
+ cid=0;Object.keys(S.local).forEach(function(b){S.local[b].forEach(function(x){var n=parseInt(String(x).replace(/\D/g,''),10);if(n>cid)cid=n})});
+ document.getElementById('out').innerHTML='';
+ var ex=document.getElementById('expl');ex.innerHTML='';ex.style.display='none';
+ document.getElementById('win').style.display='none';
+ document.getElementById('cmd').disabled=false;
+ document.getElementById('navmenu').style.display='none';
+ syncAction();render();
+}
+function goMission(k){enterMission(k)}
 
 function gcol(id){
  if(String(id).indexOf('M')===0)return ['var(--color-background-success)','var(--color-text-success)'];      // merge
@@ -710,8 +777,13 @@ function run(raw){
 function check(c){
  var ms=CH[curCh].missions;if(curM>=ms.length)return;
  if(ms[curM].chk(c)){
-  note("✓ "+ms[curM].t+" — done",'erc');curM++;setupDone=false;
-  if(curM>=ms.length){chapterDone()}else{runSetup();syncAction();render();note("→ Next: "+ms[curM].t,'erp')}
+  note("✓ "+ms[curM].t+" — done",'erc');
+  if(curM+1>=ms.length){curM++;chapterDone();return}
+  if(CH[curCh].selfContained){
+   var nk=curM+1,e=document.getElementById('expl'),b=document.createElement('button');
+   b.className='contb';b.textContent='Continue → '+ms[nk].t;b.onclick=function(){enterMission(nk)};
+   e.appendChild(b);document.getElementById('cmd').disabled=true;
+  }else{curM++;setupDone=false;runSetup();syncAction();render();note("→ Next: "+ms[curM].t,'erp')}
  }
 }
 function chapterDone(){
