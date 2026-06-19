@@ -22,8 +22,12 @@ function blank(){return {HEAD:'main',local:{main:['c0']},working:[],staging:[],o
 // ====================================================================
 function line(t,c){var o=document.getElementById('out'),d=document.createElement('div');if(c)d.className=c;d.innerHTML=t;o.appendChild(d);o.scrollTop=o.scrollHeight}
 // note() = course teaching ("what just happened"), shown in the card's explainer – NOT the terminal.
-function note(t,cls){var e=document.getElementById('expl');e.style.display='block';var d=document.createElement('div');d.className=cls||'en';d.textContent=(cls?'':'ℹ ')+t;e.appendChild(d)}
+function note(t,cls){var e=document.getElementById('expl');e.style.display='block';var d=document.createElement('div');d.className=cls||'en';d.innerHTML=(cls?'':'ℹ ')+fmt(t);e.appendChild(d)}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+// fmt(): escape, then auto-wrap code (git commands, flags, <placeholders>, .gitignore, HEAD) in <code> as a monospace tell.
+var GITSUB='commit|add|status|log|diff|show|branch|switch|checkout|merge|rebase|cherry-pick|restore|reset|stash|revert|reflog|tag|remote|fetch|push|pull|clone|init|rm|mv|config';
+var CODE_RE=new RegExp('\\bgit\\s+(?:'+GITSUB+')(?:\\s+--?[a-zA-Z][\\w-]*)*|&lt;[^&]{1,30}?&gt;|\\.gitignore\\b|\\bHEAD(?:~\\d+|\\^\\d*)?\\b|(^|[^\\w-])(--?[a-zA-Z][\\w-]*)','g');
+function fmt(t){return esc(t).replace(CODE_RE,function(m,p1,p2){return p2!==undefined?p1+'<code>'+p2+'</code>':'<code>'+m+'</code>'})}
 function dots(a){return a.map(function(){return '●'}).join('')}
 
 // ====================================================================
@@ -63,7 +67,7 @@ function render(){
  });
  document.getElementById('map').innerHTML=mp;
  document.querySelectorAll('#map .ch').forEach(function(b){b.onclick=function(){goCh(+b.dataset.ch)}});
- document.getElementById('blurb').textContent=ch.blurb;
+ document.getElementById('blurb').innerHTML=fmt(ch.blurb);
 
  // pipeline (the three areas)
  var work=document.getElementById('a-work');work.innerHTML=S.working.length?S.working.map(function(f){return '<div class="it" style="color:var(--color-text-warning)">'+f+'</div>'}).join(''):'<span class="em">clean</span>';
@@ -99,20 +103,20 @@ function skeleton(a){return a.map(tok).join(' ')}
 function missionBody(m){
  if(m.lay||m.tech){
   var h='';
-  if(m.lay)h+='<p class="lay">'+esc(m.lay)+'</p>';
-  if(m.tech)h+='<p class="tech">'+esc(m.tech)+'</p>';
+  if(m.lay)h+='<p class="lay">'+fmt(m.lay)+'</p>';
+  if(m.tech)h+='<p class="tech">'+fmt(m.tech)+'</p>';
   if(m.syntax&&m.syntax.length===1){var p0=m.syntax[0];
-   h+='<div class="syn"><div class="synline">'+tok(p0)+(p0.note?' <span class="sx">—</span> '+esc(p0.note):'')+'</div></div>';}
+   h+='<div class="syn"><div class="synline">'+tok(p0)+(p0.note?' <span class="sx">–</span> '+fmt(p0.note):'')+'</div></div>';}
   else if(m.syntax&&m.syntax.length){h+='<div class="syn"><div class="synline">'+skeleton(m.syntax)+'</div>';
    var notes=m.syntax.filter(function(p){return p.note});
-   if(notes.length)h+='<ul class="synparts">'+notes.map(function(p){return '<li>'+tok(p)+' <span class="sx">—</span> '+esc(p.note)+'</li>'}).join('')+'</ul>';
+   if(notes.length)h+='<ul class="synparts">'+notes.map(function(p){return '<li>'+tok(p)+' <span class="sx">–</span> '+fmt(p.note)+'</li>'}).join('')+'</ul>';
    h+='</div>';}
-  if(m.goal)h+='<div class="goalrow"><span class="goalk">Your goal</span><span class="goalv">'+esc(m.goal)+'</span></div>';
+  if(m.goal)h+='<div class="goalrow"><span class="goalk">Your goal</span><span class="goalv">'+fmt(m.goal)+'</span></div>';
   return h;
  }
  var hb='';
- if(m.def||m.why)hb+='<p class="lay">'+esc(m.def||m.why)+'</p>';
- if(m.g)hb+='<div class="goalrow"><span class="goalk">Goal</span><span class="goalv">'+esc(m.g)+'</span></div>';
+ if(m.def||m.why)hb+='<p class="lay">'+fmt(m.def||m.why)+'</p>';
+ if(m.g)hb+='<div class="goalrow"><span class="goalk">Goal</span><span class="goalv">'+fmt(m.g)+'</span></div>';
  if(m.do||m.h)hb+='<p class="tech" style="margin-top:9px">Try: <code>'+esc(m.do||m.h)+'</code></p>';
  return hb;
 }
@@ -209,7 +213,7 @@ function run(raw){
  }
  else if(/^git\s+diff\s+(--staged|--cached)/.test(c)){if(S.staging.length){line("diff – staged changes about to be committed:",'di');S.staging.forEach(function(f){line("  "+f+":  - old line\n           + new line",'ok')})}else line("(nothing staged to diff)",'di');note("diff --staged shows what's IN the box. Plain git diff shows what's still on your desk.")}
  else if(/^git\s+diff\b/.test(c)){if(S.working.length){line("diff – unstaged changes in your working folder:",'di');S.working.forEach(function(f){line("  "+f+":  - old line\n           + new line",'wn')})}else line("(no unstaged changes – try git diff --staged)",'di')}
- else if(/^git\s+show\b/.test(c)){var last=(S.local[S.HEAD]||[]).slice(-1)[0];line("commit "+(last||'—')+"\n  shows the full changes introduced by that one commit.",'di')}
+ else if(/^git\s+show\b/.test(c)){var last=(S.local[S.HEAD]||[]).slice(-1)[0];line("commit "+(last||'–')+"\n  shows the full changes introduced by that one commit.",'di')}
 
  // ---- staging ----
  else if(/^git\s+add\b/.test(c)){
