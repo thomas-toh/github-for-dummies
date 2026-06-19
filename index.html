@@ -14,9 +14,12 @@
 <div id="gc">
 <h2 class="sr-only">An interactive, multi-chapter git course.</h2>
 
-
-<div class="map" id="map"></div>
-<p class="blurb" id="blurb"></p>
+<header class="topbar">
+  <button id="burger" aria-label="Open chapters"><i class="ti ti-menu-2" aria-hidden="true"></i></button>
+  <strong class="brand">Git Course</strong>
+  <span id="chtitle"></span>
+  <button id="nextch" disabled>Next chapter <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+</header>
 
 <div class="cols">
   <div class="mcard">
@@ -27,6 +30,7 @@
     <div class="navmenu" id="navmenu"></div>
     <div class="mscroll">
       <div id="mbody"></div>
+      <button id="actbtn" style="font-size:13px;display:none"></button>
       <div class="expl" id="expl"></div>
     </div>
   </div>
@@ -37,25 +41,29 @@
   </div>
 </div>
 
-<div class="pipe">
-  <div class="area"><p class="al"><i class="ti ti-folder" aria-hidden="true"></i> working dir</p><div id="a-work"></div></div>
-  <div class="arr"><i class="ti ti-arrow-right" aria-hidden="true"></i>add</div>
-  <div class="area"><p class="al"><i class="ti ti-inbox" aria-hidden="true"></i> staging</p><div id="a-stage"></div></div>
-  <div class="arr"><i class="ti ti-arrow-right" aria-hidden="true"></i>commit</div>
-  <div class="area"><p class="al"><i class="ti ti-history" aria-hidden="true"></i> history</p><div id="a-hist"></div></div>
+<div class="vis">
+  <div class="pipe">
+    <div class="area"><p class="al"><i class="ti ti-folder" aria-hidden="true"></i> working dir</p><div id="a-work"></div></div>
+    <div class="arr"><i class="ti ti-arrow-right" aria-hidden="true"></i>add</div>
+    <div class="area"><p class="al"><i class="ti ti-inbox" aria-hidden="true"></i> staging</p><div id="a-stage"></div></div>
+    <div class="arr"><i class="ti ti-arrow-right" aria-hidden="true"></i>commit</div>
+    <div class="area"><p class="al"><i class="ti ti-history" aria-hidden="true"></i> history</p><div id="a-hist"></div></div>
+  </div>
+  <div class="graph" id="graph" style="display:none"></div>
+  <div class="graph mtarget" id="mtarget" style="display:none"></div>
+  <div class="remotes" id="remotes" style="display:none"></div>
 </div>
 
-<div class="graph" id="graph" style="display:none"></div>
-<div class="graph mtarget" id="mtarget" style="display:none"></div>
-<div class="remotes" id="remotes" style="display:none"></div>
-
-<div class="foot">
-  <button id="actbtn" style="font-size:13px;display:none"></button>
-  <button id="resetb" style="font-size:13px"><i class="ti ti-refresh" aria-hidden="true"></i> Restart chapter</button>
-  <span class="spacer"></span>
-  <button id="unlockb" class="lnk"><i class="ti ti-lock-open" aria-hidden="true"></i> Unlock all chapters</button>
-  <button id="wipeb" class="lnk"><i class="ti ti-trash" aria-hidden="true"></i> Reset all progress</button>
-</div>
+<div class="backdrop" id="backdrop"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-h"><i class="ti ti-book-2" aria-hidden="true"></i> Chapters</div>
+  <div class="map" id="map"></div>
+  <div class="drawer-utils">
+    <button id="resetb"><i class="ti ti-refresh" aria-hidden="true"></i> Restart chapter</button>
+    <button id="unlockb" class="lnk"><i class="ti ti-lock-open" aria-hidden="true"></i> Unlock all chapters</button>
+    <button id="wipeb" class="lnk"><i class="ti ti-trash" aria-hidden="true"></i> Reset all progress</button>
+  </div>
+</aside>
 
 <div id="win"></div>
 </div>

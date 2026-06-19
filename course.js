@@ -12,12 +12,6 @@ function newC(){cid++;return 'c'+cid}
 function blank(){return {HEAD:'main',local:{main:['c0']},working:[],staging:[],origin:{},upstream:{},tags:{},stash:[],reflog:[],conflict:false}}
 
 // ====================================================================
-//  CURRICULUM
-//  diff = difficulty 1-4 · show controls which visuals appear
-//  blurb = chapter intro · why = the friendly explainer per mission
-// ====================================================================
-
-// ====================================================================
 //  TERMINAL OUTPUT
 // ====================================================================
 function line(t,c){var o=document.getElementById('out'),d=document.createElement('div');if(c)d.className=c;d.innerHTML=t;o.appendChild(d);o.scrollTop=o.scrollHeight}
@@ -35,7 +29,7 @@ function dots(a){return a.map(function(){return '●'}).join('')}
 // ====================================================================
 function goCh(i){
  curCh=i;curM=0;setupDone=false;save();
- document.getElementById('navmenu').style.display='none';
+ document.getElementById('navmenu').style.display='none';closeDrawer();
  if(CH[i].selfContained){enterMission(0);return}
  S=blank();CH[i].onEnter();
  cid=0;Object.keys(S.local).forEach(function(b){S.local[b].forEach(function(x){var n=parseInt(String(x).replace(/\D/g,''),10);if(n>cid)cid=n})});
@@ -67,7 +61,8 @@ function render(){
  });
  document.getElementById('map').innerHTML=mp;
  document.querySelectorAll('#map .ch').forEach(function(b){b.onclick=function(){goCh(+b.dataset.ch)}});
- document.getElementById('blurb').innerHTML=fmt(ch.blurb);
+ var ct=document.getElementById('chtitle');if(ct)ct.innerHTML='Ch '+(curCh+1)+' · '+esc(ch.title)+'<span class="chdiff">'+'◆'.repeat(ch.diff)+'</span>';
+ var nx=document.getElementById('nextch');if(nx)nx.disabled=!(maxCompleted>curCh&&curCh<CH.length-1);
 
  // pipeline (the three areas)
  var work=document.getElementById('a-work');work.innerHTML=S.working.length?S.working.map(function(f){return '<div class="it" style="color:var(--color-text-warning)">'+f+'</div>'}).join(''):'<span class="em">clean</span>';
@@ -327,12 +322,10 @@ function chapterDone(){
  if(curCh+1>maxUnlocked)maxUnlocked=curCh+1;
  if(curCh+1>maxCompleted)maxCompleted=curCh+1;
  save();render();
+ note("✓ Chapter "+(curCh+1)+" complete!",'erc');
  if(CH[curCh].recap)note("📝 Recap – "+CH[curCh].recap,'erp');
  if(curCh===CH.length-1){grad();return}
- var w=document.getElementById('win');w.style.display='block';
- w.innerHTML="<strong style='font-weight:500'><i class='ti ti-check' aria-hidden='true'></i> Chapter "+(curCh+1)+" complete!</strong> “"+CH[curCh+1].title+"” is unlocked.";
- var b=document.createElement('button');b.style.marginTop='10px';b.style.fontSize='13px';b.innerHTML="Start chapter "+(curCh+2)+" →";b.onclick=function(){goCh(curCh+1)};
- w.appendChild(document.createElement('br'));w.appendChild(b);
+ note("“"+CH[curCh+1].title+"” unlocked – hit Next chapter, top right.",'erp');
 }
 function grad(){
  document.getElementById('cmd').disabled=true;
@@ -346,8 +339,14 @@ function grad(){
 document.getElementById('cmd').addEventListener('keydown',function(e){if(e.key==='Enter'){run(this.value);this.value=''}});
 document.getElementById('resetb').onclick=function(){goCh(curCh)};
 document.addEventListener('click',function(e){var mm=document.getElementById('navmenu');if(mm&&mm.style.display==='block'&&e.target&&e.target.closest&&!e.target.closest('#navmenu')&&!e.target.closest('#navc'))mm.style.display='none'});
-document.getElementById('unlockb').onclick=function(){maxUnlocked=CH.length-1;save();render();line("All chapters unlocked – jump anywhere from the map above.",'ok')};
+document.getElementById('unlockb').onclick=function(){maxUnlocked=CH.length-1;save();render();line("All chapters unlocked – open the ☰ menu to jump anywhere.",'ok')};
 document.getElementById('wipeb').onclick=function(){if(confirm("Wipe all saved progress and start over from Chapter 1?")){try{localStorage.removeItem(KEY)}catch(e){}maxUnlocked=0;maxCompleted=0;startCh=0;goCh(0)}};
+function openDrawer(){document.getElementById('drawer').classList.add('open');document.getElementById('backdrop').classList.add('open')}
+function closeDrawer(){var d=document.getElementById('drawer');if(!d)return;d.classList.remove('open');document.getElementById('backdrop').classList.remove('open')}
+document.getElementById('burger').onclick=function(){document.getElementById('drawer').classList.contains('open')?closeDrawer():openDrawer()};
+document.getElementById('backdrop').onclick=closeDrawer;
+document.getElementById('nextch').onclick=function(){if(curCh<CH.length-1)goCh(curCh+1)};
+document.getElementById('win').onclick=function(){this.style.display='none'};
 
 load();
 goCh(Math.min(startCh,CH.length-1));

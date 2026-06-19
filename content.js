@@ -3,7 +3,6 @@ var CH=[
 
 // ---------- ESSENTIALS ----------
 {sec:"Essentials",title:"Starting a repo",diff:1,show:{},selfContained:true,
- blurb:"Every project that uses git is a “repository” – a folder git keeps an eye on. There are two ways to get one: start a fresh repo, or copy an existing one.",
  onEnter:function(){S=blank();S.local={};S.inited=false;fb=null},
  missions:[
   {t:"Turn this folder into a repo",
@@ -30,7 +29,6 @@ var CH=[
  recap:"git init = start a repo from scratch · git status = “where are we?” · git clone <url> = copy a repo that already exists."},
 
 {sec:"Essentials",title:"First commits",diff:1,show:{},selfContained:true,
- blurb:"A change moves through three places before it's saved for good: your working folder → the staging area → committed history. Let's push one change all the way through, then learn the shortcut.",
  onEnter:function(){S=blank();fb=null},
  missions:[
   {t:"Check the status",
@@ -61,7 +59,6 @@ var CH=[
  recap:"add = pack the box (./-A/-p variants) · commit -m = seal + label it · commit -am = add + commit in one (tracked files only)."},
 
 {sec:"Essentials",title:"Looking around",diff:1,show:{},selfContained:true,
- blurb:"Before you change anything, it helps to look. Two commands answer the questions you'll ask constantly: “what happened here?” (log) and “what did I just touch?” (diff). Neither one changes a thing – they're read-only, so you can run them as often as you like.",
  onEnter:function(){S=blank();S.local={main:['c0','c1','c2']};fb=null},
  missions:[
   {t:"Read the history",
@@ -94,7 +91,6 @@ var CH=[
  recap:"log = the diary (--oneline / --graph to tidy it) · diff = unsaved changes on your desk · diff --staged = what's in the box, about to be committed."},
 
 {sec:"Essentials",title:"Branches & switching",diff:2,show:{branches:true,graph:true},selfContained:true,
- blurb:"A branch is a parallel universe for your code – a place to try things without touching the main timeline. You'll make one, work on it, hop between them, and clean up after. The graph below draws each branch as its own line.",
  onEnter:function(){S=blank();S.local={main:['c0','c1']};fb=null},
  missions:[
   {t:"List your branches",
@@ -138,7 +134,6 @@ var CH=[
  recap:"branch = list · switch -c / checkout -b = create+move · switch - = back to previous · branch -d = safe delete, -D = force delete."},
 
 {sec:"Essentials",title:"Merging",diff:2,show:{branches:true,graph:true},selfContained:true,
- blurb:"Branching is only half the story – eventually good work needs to come home. Merging pulls one branch's commits into another. The one rule to tattoo on your brain: only the branch you're STANDING ON changes.",
  onEnter:function(){S=blank();S.local={main:['c0','c1'],feature:['c0','c1','f1','f2']};fb=null},
  missions:[
   {t:"A clean fast-forward",
@@ -161,7 +156,6 @@ var CH=[
  recap:"merge brings another branch INTO the one you're standing on · fast-forward = main slides forward in a straight line · a merge commit (M) ties two diverged lines together · --no-ff forces a merge commit."},
 
 {sec:"Essentials",title:"Merge conflicts",diff:3,show:{branches:true,graph:true},selfContained:true,
- blurb:"The moment every beginner dreads, defused. A conflict just means two branches edited the SAME line and git refuses to guess which you meant. It's not an error – it's git asking you a polite question.",
  onEnter:function(){S=blank();S.local={main:['c0','c1','mx'],feature:['c0','c1','fx']};S.conflict=false;fb='feature'},
  missions:[
   {t:"Trigger the conflict",
@@ -190,7 +184,6 @@ var CH=[
  recap:"Conflict = two branches touched the same line. Fix: edit file, remove the <<< === >>> markers, git add, git commit. Bail out anytime with git merge --abort."},
 
 {sec:"Essentials",title:"The undo button",diff:2,show:{branches:true,graph:true},selfContained:true,
- blurb:"Git's superpower is that almost nothing is permanent – IF you know the right undo. There's a different one for each “oops,” so let's learn them by the mess they clean up.",
  onEnter:function(){S=blank();S.local={main:['c0','c1','c2']};fb=null},
  missions:[
   {t:"Unstage a file",
@@ -224,7 +217,6 @@ var CH=[
  recap:"restore --staged = unstage · restore FILE = discard edit · commit --amend = fix last commit (private only) · reset --soft/--mixed/--hard = undo a commit, keeping/unstaging/destroying the changes."},
 
 {sec:"Essentials",title:"Ignoring files",diff:1,show:{},selfContained:true,
- blurb:"Some files should never be committed: passwords, giant build folders, OS clutter like .DS_Store. A file called .gitignore is git's bouncer – names on the list don't get past the velvet rope and into your history.",
  onEnter:function(){S=blank();S.local={main:['c0']};S.ignored=false;fb=null},
  missions:[
   {t:"Spot the junk",
@@ -253,7 +245,6 @@ var CH=[
  recap:".gitignore lists files/patterns git should never track (secrets, build junk, *.log, node_modules/). Commit the .gitignore itself so the team shares it. Untrack an already-tracked file with git rm --cached FILE."},
 
 {sec:"Essentials",title:"Going online",diff:2,show:{branches:true,remotes:true,graph:true},selfContained:true,
- blurb:"Everything so far lived on your laptop. “origin” is your project's copy on GitHub. push sends commits up; pull brings commits down. This is the moment git stops being a private diary and turns into teamwork.",
  onEnter:function(){S=blank();S.local={main:['c0','c1']};fb=null},
  missions:[
   {t:"See your remotes",
@@ -290,7 +281,6 @@ var CH=[
  recap:"remote -v = list remotes · push -u origin main = upload + link (once) · push/pull = up/down after that · fetch = download only · pull --rebase = tidy straight line instead of a merge bubble."},
 
 {sec:"Essentials",title:"Fork & contribute",diff:3,show:{branches:true,remotes:true,upstream:true,graph:true},selfContained:true,
- blurb:"This is the real open-source contribution flow – how a stranger on the internet gets their code into someone else's project. The trick is two remotes. “upstream” is the ORIGINAL repo (say, Anthropic's); you can only read from it and politely propose changes. “origin” is your own fork; you push there freely. Two remotes, two very different jobs.",
  onEnter:function(){S=blank();S.local={main:['base']};S.origin={main:['base']};S.upstream={main:['base','U1']};fb=null;prDone=false},
  missions:[
   {t:"See both remotes",
@@ -342,7 +332,6 @@ var CH=[
 
 // ---------- ADVANCED ----------
 {sec:"Advanced",title:"Stash",diff:3,show:{branches:true,graph:true},selfContained:true,
- blurb:"The “oh no, the boss needs a fix RIGHT NOW” button. Stash shelves your half-done work so your desk is clean, lets you deal with the emergency, then hands your work back exactly as it was.",
  onEnter:function(){S=blank();S.local={main:['c0','c1']};fb=null},
  missions:[
   {t:"Shelve your mess",
@@ -367,7 +356,6 @@ var CH=[
  recap:"stash = park uncommitted work, clean desk · stash list = see the drawer · pop = bring back + remove · apply = bring back + keep · -u also stashes untracked files."},
 
 {sec:"Advanced",title:"Rebase & squash",diff:4,show:{branches:true,graph:true},selfContained:true,
- blurb:"Rebase rewrites history to make it tidy. Instead of merging (which records the messy truth, merge bubble and all), rebase REPLANTS your commits onto a newer base – as if you'd started from there all along. It's powerful, and it's the one tool that comes with a real safety rule.",
  onEnter:function(){S=blank();S.local={main:['c0','c1','c2','c3'],feature:['c0','c1','f1','f2']};S.HEAD='feature';fb='feature'},
  missions:[
   {t:"Replant your branch",
@@ -390,7 +378,6 @@ var CH=[
  recap:"rebase <base> = replant your commits onto a newer base (one clean straight line, no merge bubble) · rebase -i = reorder / reword / squash recent commits into a tidy story · GOLDEN RULE: never rebase commits you've already pushed and shared."},
 
 {sec:"Advanced",title:"Cherry-pick",diff:4,show:{branches:true,graph:true},selfContained:true,
- blurb:"Sometimes you don't want a whole branch – you want ONE commit out of it. Cherry-pick is copy-paste for a single commit: pluck the one you need and leave the rest behind.",
  onEnter:function(){S=blank();S.local={main:['c0','c1'],feature:['c0','c1','fixA','fancyB']};fb=null},
  missions:[
   {t:"Grab one commit",
@@ -405,7 +392,6 @@ var CH=[
  recap:"cherry-pick COMMIT = copy a single commit's changes onto your current branch as a new commit. Perfect for plucking one fix out of an unfinished branch · conflicts resolve just like a merge (edit, git add, cherry-pick --continue)."},
 
 {sec:"Advanced",title:"Force push without crying",diff:4,show:{branches:true,remotes:true,graph:true},selfContained:true,
- blurb:"After you rebase or amend, your local history no longer matches what's on the remote – and git will refuse a normal push. Forcing is how you overwrite the remote. It's a loaded gun; here's how to hold it safely.",
  onEnter:function(){S=blank();S.local={main:['c0','c1','c2r']};S.origin={main:['c0','c1','c2']};fb=null},
  missions:[
   {t:"Watch a normal push get rejected",
@@ -433,7 +419,6 @@ var CH=[
  recap:"After rebase/amend the remote diverges → normal push is rejected. --force / -f overwrites blindly (can erase teammates' work). --force-with-lease overwrites ONLY if the remote hasn't changed since you fetched – always prefer it."},
 
 {sec:"Advanced",title:"Safe undo & recovery",diff:4,show:{branches:true,graph:true},selfContained:true,
- blurb:"Two lifesavers. revert undoes a commit WITHOUT rewriting history, so it's safe even on branches other people share. reflog is git's surveillance tape – it quietly remembers everywhere you've been, so commits you think you've lost usually aren't lost at all.",
  onEnter:function(){S=blank();S.local={main:['c0','c1','bad']};fb=null},
  missions:[
   {t:"Undo a shared commit the safe way",
@@ -454,7 +439,6 @@ var CH=[
  recap:"revert = safe undo (a new commit that cancels an old one) – use it on shared history · reset = rewrite history – private branches only · reflog = the time machine that finds commits you thought you'd destroyed."},
 
 {sec:"Advanced",title:"Tags & releases",diff:2,show:{branches:true,remotes:true,graph:true},selfContained:true,
- blurb:"Branches move; tags don't. A tag is a permanent bookmark on one specific commit – “this exact code is version 1.0.” That's how releases are marked, so people can always find the precise snapshot you shipped.",
  onEnter:function(){S=blank();S.local={main:['c0','c1','c2']};S.origin={main:['c0','c1','c2']};fb=null},
  missions:[
   {t:"Bookmark this commit",

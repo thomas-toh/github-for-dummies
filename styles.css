@@ -14,13 +14,13 @@
  --color-text-info:#85b7eb;--color-text-success:#5dcaa5;--color-text-warning:#fac775;--color-text-danger:#f09595;
  --color-border-tertiary:rgba(255,255,255,.15);--color-border-secondary:rgba(255,255,255,.3);
 }}
-body{margin:0;padding:24px;max-width:1040px;margin:0 auto;background:var(--color-background-tertiary);color:var(--color-text-primary);font-family:var(--font-sans)}
+body{margin:0;background:var(--color-background-tertiary);color:var(--color-text-primary);font-family:var(--font-sans)}
 button{font-family:inherit;background:transparent;border:.5px solid var(--color-border-secondary);color:var(--color-text-primary);border-radius:var(--border-radius-md);padding:6px 12px;cursor:pointer}
 button:hover{background:var(--color-background-secondary)}button:active{transform:scale(.98)}button:disabled{opacity:.5;cursor:not-allowed}
 input{font-family:inherit}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
-#gc{font-family:var(--font-sans);font-size:14px}
+#gc{font-family:var(--font-sans);font-size:14px;height:100dvh;max-width:1100px;margin:0 auto;padding:14px 16px;box-sizing:border-box;display:flex;flex-direction:column;gap:12px;overflow:hidden}
 #gc .map{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
 #gc .sech{flex-basis:100%;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--color-text-tertiary);font-weight:600;margin:8px 0 -2px}
 #gc .sech:first-child{margin-top:0}
@@ -31,7 +31,6 @@ input{font-family:inherit}
 #gc .ch .ct{font-size:13px;font-weight:500;display:block;margin-top:1px}
 #gc .ch .cdone{color:var(--color-text-success)}
 #gc .ch .diff{position:absolute;top:8px;right:9px;font-size:9px;color:var(--color-text-tertiary);letter-spacing:1px}
-#gc .blurb{color:var(--color-text-secondary);line-height:1.6;margin:0 0 14px;font-size:13.5px}
 #gc .mcard{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:14px}
 #gc .mtop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px}
 #gc .pdots{display:flex;gap:5px}
@@ -69,11 +68,9 @@ input{font-family:inherit}
 #gc .pr{display:flex;align-items:center;gap:8px;padding:8px 13px;border-top:0.5px solid #21262d;background:#161b22}
 #gc .pr span{color:#3fb950;font-family:var(--font-mono);font-size:13px}
 #gc #cmd{flex:1;background:transparent;border:none;color:#e6edf3;font-family:var(--font-mono);font-size:13px;outline:none;padding:4px 0;min-height:0;height:auto}
-#gc .foot{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
-#gc .foot .spacer{flex:1}
-#gc .foot .lnk{border:none;color:var(--color-text-tertiary);font-size:12px;padding:6px 4px}
-#gc .foot .lnk:hover{background:transparent;color:var(--color-text-secondary);text-decoration:underline}
-#gc #win{display:none;background:var(--color-background-success);border-radius:var(--border-radius-md);padding:12px 14px;margin-top:12px;color:var(--color-text-success);line-height:1.6}
+#gc .lnk{border:none;color:var(--color-text-tertiary);font-size:12px;padding:6px 4px}
+#gc .lnk:hover{background:transparent;color:var(--color-text-secondary);text-decoration:underline}
+#gc #win{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:40;max-width:420px;width:calc(100% - 48px);box-sizing:border-box;background:var(--color-background-success);border-radius:var(--border-radius-lg);padding:18px 20px;color:var(--color-text-success);line-height:1.6;box-shadow:0 14px 44px rgba(0,0,0,.3);cursor:pointer}
 #gc .daily{background:var(--color-background-info);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:14px}
 #gc .daily h3{margin:0;font-size:15px;font-weight:600;color:var(--color-text-info)}
 #gc .daily .streak{font-size:12.5px;color:var(--color-text-info);margin-top:3px;opacity:.95}
@@ -103,7 +100,7 @@ input{font-family:inherit}
 #gc .tech{margin:9px 0 0;line-height:1.6;font-size:13px;color:var(--color-text-secondary)}
 #gc .syn{margin:12px 0 0;background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
 #gc .synline{font-size:13.5px;line-height:2}
-#gc code{font-family:var(--font-mono);font-size:12.5px;color:var(--color-text-info);background:var(--color-background-secondary);border-radius:5px;padding:1.5px 6px}
+#gc code{font-family:var(--font-mono);font-size:12.5px;color:var(--color-text-info);background:var(--color-background-tertiary);border:.5px solid var(--color-border-tertiary);border-radius:5px;padding:1px 5px}
 #gc .ph{font-family:var(--font-mono);font-size:12.5px;font-style:italic;color:var(--color-text-tertiary)}
 #gc .shtok{font-family:var(--font-mono);font-size:12.5px;color:var(--color-text-tertiary)}
 #gc .synparts{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
@@ -114,19 +111,43 @@ input{font-family:inherit}
 #gc .goalv{color:var(--color-text-primary)}
 #gc .contb{display:inline-block;margin-top:10px;font-size:13px;background:var(--color-background-success);border-color:var(--color-text-success);color:var(--color-text-success)}
 
-/* two-column console: guidance card (left) + terminal (right), fixed height so the
-   terminal never moves as the card content changes; long instructions scroll inside. */
-#gc .cols{display:flex;gap:14px;align-items:stretch;margin-bottom:14px}
-#gc .cols>.mcard,#gc .cols>.term{flex:1;min-width:0;height:460px;margin-bottom:0;box-sizing:border-box}
+/* app shell: header / fill-screen console / compact visuals band, all in one 100dvh column */
+#gc .topbar{display:flex;align-items:center;gap:10px;flex-shrink:0}
+#gc .topbar .brand{font-weight:600;font-size:15px;flex-shrink:0}
+#gc #burger{font-size:18px;line-height:1;padding:3px 9px;border-radius:var(--border-radius-md);flex-shrink:0}
+#gc #chtitle{color:var(--color-text-secondary);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#gc #chtitle .chdiff{color:var(--color-text-tertiary);font-size:10px;letter-spacing:1px;margin-left:5px}
+#gc #nextch{margin-left:auto;font-size:13px;white-space:nowrap;flex-shrink:0;background:var(--color-background-info);border-color:var(--color-border-info);color:var(--color-text-info)}
+#gc #nextch:disabled{background:transparent;color:var(--color-text-tertiary);border-color:var(--color-border-tertiary)}
+
+/* console row fills the leftover height; the card scrolls inside, the terminal output scrolls */
+#gc .cols{display:flex;gap:14px;align-items:stretch;flex:1;min-height:0}
+#gc .cols>.mcard,#gc .cols>.term{flex:1;min-width:0;min-height:0;margin-bottom:0;box-sizing:border-box}
 #gc .cols>.mcard{display:flex;flex-direction:column}
 #gc .mscroll{flex:1;overflow-y:auto;min-height:0}
 #gc .cols>.term{display:flex;flex-direction:column}
 #gc .cols>.term #out{flex:1;max-height:none}
-/* narrow / mobile: stack and let everything size naturally */
+
+/* visuals band: pipeline + graph(s) + remotes side by side, capped so it never crowds the console */
+#gc .vis{display:flex;gap:10px;align-items:flex-start;flex-shrink:0;max-height:32vh;overflow-y:auto}
+#gc .vis>*{flex:1;min-width:0;margin-bottom:0}
+
+/* slide-in chapter drawer (burger) */
+#gc .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:25;display:none}
+#gc .backdrop.open{display:block}
+#gc .drawer{position:fixed;left:0;top:0;height:100%;width:300px;max-width:85vw;box-sizing:border-box;background:var(--color-background-tertiary);border-right:.5px solid var(--color-border-secondary);box-shadow:2px 0 24px rgba(0,0,0,.25);z-index:30;transform:translateX(-100%);transition:transform .2s ease;display:flex;flex-direction:column;padding:14px;overflow-y:auto}
+#gc .drawer.open{transform:none}
+#gc .drawer-h{font-weight:600;font-size:14px;display:flex;align-items:center;gap:6px;margin-bottom:10px}
+#gc .drawer .map{display:block;margin-bottom:0}
+#gc .drawer .map .ch{display:block;width:100%;min-width:0;box-sizing:border-box;margin:0 0 6px}
+#gc .drawer .map .sech{display:block;flex-basis:auto;margin:12px 0 4px}
+#gc .drawer-utils{margin-top:14px;padding-top:12px;border-top:.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+
+/* narrow / short screens: stack and scroll instead of forcing one viewport */
 @media(max-width:760px){
- body{padding:16px;max-width:none}
+ #gc{height:auto;min-height:100dvh;overflow:visible;padding:12px}
  #gc .cols{flex-direction:column}
- #gc .cols>.mcard,#gc .cols>.term{height:auto}
- #gc .mscroll{overflow-y:visible}
+ #gc .cols>.mcard,#gc .cols>.term{min-height:300px}
+ #gc .vis{flex-direction:column;max-height:none}
  #gc .cols>.term #out{max-height:240px;flex:none}
 }
