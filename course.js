@@ -1,4 +1,4 @@
-// course.js — the simulator engine: state, render, navigation, wiring.
+// course.js – the simulator engine: state, render, navigation, wiring.
 var S,fb,prDone,cid,curCh=0,curM=0,maxUnlocked=0,maxCompleted=0,setupDone,startCh=0;
 var KEY='gitcourse.progress';
 
@@ -21,7 +21,7 @@ function blank(){return {HEAD:'main',local:{main:['c0']},working:[],staging:[],o
 //  TERMINAL OUTPUT
 // ====================================================================
 function line(t,c){var o=document.getElementById('out'),d=document.createElement('div');if(c)d.className=c;d.innerHTML=t;o.appendChild(d);o.scrollTop=o.scrollHeight}
-// note() = course teaching ("what just happened"), shown in the card's explainer — NOT the terminal.
+// note() = course teaching ("what just happened"), shown in the card's explainer – NOT the terminal.
 function note(t,cls){var e=document.getElementById('expl');e.style.display='block';var d=document.createElement('div');d.className=cls||'en';d.textContent=(cls?'':'ℹ ')+t;e.appendChild(d)}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function dots(a){return a.map(function(){return '●'}).join('')}
@@ -172,7 +172,7 @@ function drawGraph(){document.getElementById('graph').innerHTML=graphHTML(S.loca
 // ====================================================================
 function run(raw){
  var c=raw.trim();if(!c)return;
- // ponytail: split chained commands like a real shell. Limitation: a ';'/'&&' inside a quoted commit message would mis-split — no course hint does that.
+ // ponytail: split chained commands like a real shell. Limitation: a ';'/'&&' inside a quoted commit message would mis-split – no course hint does that.
  if(/;|&&/.test(c)){c.split(/\s*(?:;|&&)\s*/).forEach(function(p){if(p.trim())run(p)});return}
  var _e=document.getElementById('expl');_e.innerHTML='';_e.style.display='none';   // fresh explainer per command
  line("<span class='u'>$</span> "+esc(c));var m,name;
@@ -189,8 +189,8 @@ function run(raw){
  else if(c==='clear'){document.getElementById('out').innerHTML=''}
 
  // ---- starting a repo ----
- else if(/^git\s+init/.test(c)){S.local={main:[]};S.inited=true;line("Initialized empty Git repository in ./.git/",'ok');note("git is now watching this folder. Nothing committed yet — run git status to see “No commits yet.”")}
- else if(/^git\s+clone\s+\S/.test(c)){S.local={main:['c0','c1']};S.origin={main:['c0','c1']};line("Cloning into 'courses'...",'di');line("remote: counting objects: done.",'di');line("done — you now have a full copy + an 'origin' remote.",'ok');note("clone = init + download all history + remember the URL as 'origin', in one command.")}
+ else if(/^git\s+init/.test(c)){S.local={main:[]};S.inited=true;line("Initialized empty Git repository in ./.git/",'ok');note("git is now watching this folder. Nothing committed yet – run git status to see “No commits yet.”")}
+ else if(/^git\s+clone\s+\S/.test(c)){S.local={main:['c0','c1']};S.origin={main:['c0','c1']};line("Cloning into 'courses'...",'di');line("remote: counting objects: done.",'di');line("done – you now have a full copy + an 'origin' remote.",'ok');note("clone = init + download all history + remember the URL as 'origin', in one command.")}
 
  // ---- status / log / diff / show ----
  else if(/^git\s+status/.test(c)){
@@ -207,8 +207,8 @@ function run(raw){
   else if(/--oneline/.test(c)){commits.forEach(function(x){line(String(x).slice(0,7)+" commit "+x,'di')});note("--oneline = the everyday view. Add --graph to draw branches in text.")}
   else commits.forEach(function(x){line("commit "+x+"\n  (author, date, message…)",'di')});
  }
- else if(/^git\s+diff\s+(--staged|--cached)/.test(c)){if(S.staging.length){line("diff — staged changes about to be committed:",'di');S.staging.forEach(function(f){line("  "+f+":  - old line\n           + new line",'ok')})}else line("(nothing staged to diff)",'di');note("diff --staged shows what's IN the box. Plain git diff shows what's still on your desk.")}
- else if(/^git\s+diff\b/.test(c)){if(S.working.length){line("diff — unstaged changes in your working folder:",'di');S.working.forEach(function(f){line("  "+f+":  - old line\n           + new line",'wn')})}else line("(no unstaged changes — try git diff --staged)",'di')}
+ else if(/^git\s+diff\s+(--staged|--cached)/.test(c)){if(S.staging.length){line("diff – staged changes about to be committed:",'di');S.staging.forEach(function(f){line("  "+f+":  - old line\n           + new line",'ok')})}else line("(nothing staged to diff)",'di');note("diff --staged shows what's IN the box. Plain git diff shows what's still on your desk.")}
+ else if(/^git\s+diff\b/.test(c)){if(S.working.length){line("diff – unstaged changes in your working folder:",'di');S.working.forEach(function(f){line("  "+f+":  - old line\n           + new line",'wn')})}else line("(no unstaged changes – try git diff --staged)",'di')}
  else if(/^git\s+show\b/.test(c)){var last=(S.local[S.HEAD]||[]).slice(-1)[0];line("commit "+(last||'—')+"\n  shows the full changes introduced by that one commit.",'di')}
 
  // ---- staging ----
@@ -216,28 +216,28 @@ function run(raw){
   if(/\s-p\b/.test(c)){line("(interactive) stage this hunk? [y,n,q,?]",'di');note("git add -p walks you through each change so you stage only the bits you mean to.");}
   else if(!S.working.length){line("nothing to add",'di')}
   else{var f=c.replace(/^git\s+add\s*/,'').replace(/-A|--all/,'').trim();
-   if(f&&f!=='.'){var i=S.working.indexOf(f);if(i>-1){S.staging.push(S.working.splice(i,1)[0]);if(S.conflict===true)S.conflict='resolved';line("",'di')}else line("pathspec '"+f+"' did not match — try git add .",'er')}
+   if(f&&f!=='.'){var i=S.working.indexOf(f);if(i>-1){S.staging.push(S.working.splice(i,1)[0]);if(S.conflict===true)S.conflict='resolved';line("",'di')}else line("pathspec '"+f+"' did not match – try git add .",'er')}
    else{var ig=(S.ignored&&S.working.indexOf('debug.log')>-1)?['debug.log']:[];S.staging=S.staging.concat(S.working.filter(function(f){return ig.indexOf(f)<0}));S.working=ig;if(S.conflict===true)S.conflict='resolved';line("",'di')}
-   if(S.conflict==='resolved')note("conflict marked resolved — now git commit to finish the merge.");
+   if(S.conflict==='resolved')note("conflict marked resolved – now git commit to finish the merge.");
   }
  }
 
  // ---- undo: restore / reset / amend ----
- else if(/^git\s+restore\s+--staged\s+\S/.test(c)){name=c.split(/\s+/).pop();var j=S.staging.indexOf(name);if(j>-1){S.working.push(S.staging.splice(j,1)[0]);line("unstaged "+name,'ok');note("file is back on your desk, edits intact — just not packed for the next commit.")}else line("not staged: "+name,'di')}
- else if(/^git\s+restore\s+\S/.test(c)||/^git\s+checkout\s+--\s+\S/.test(c)){name=c.split(/\s+/).pop();var k=S.working.indexOf(name);if(k>-1){S.working.splice(k,1);line("restored "+name+" to last committed version",'ok');note("that working-folder edit is gone for good — restore overwrites with the committed version.")}else line("nothing to restore for "+name,'di')}
+ else if(/^git\s+restore\s+--staged\s+\S/.test(c)){name=c.split(/\s+/).pop();var j=S.staging.indexOf(name);if(j>-1){S.working.push(S.staging.splice(j,1)[0]);line("unstaged "+name,'ok');note("file is back on your desk, edits intact – just not packed for the next commit.")}else line("not staged: "+name,'di')}
+ else if(/^git\s+restore\s+\S/.test(c)||/^git\s+checkout\s+--\s+\S/.test(c)){name=c.split(/\s+/).pop();var k=S.working.indexOf(name);if(k>-1){S.working.splice(k,1);line("restored "+name+" to last committed version",'ok');note("that working-folder edit is gone for good – restore overwrites with the committed version.")}else line("nothing to restore for "+name,'di')}
  else if(/^git\s+reset\s+(--soft|--mixed|--hard)/.test(c)){
   var mode=(c.match(/--(soft|mixed|hard)/)||[])[1];
   if((S.local[S.HEAD]||[]).length>1){var popped=S.local[S.HEAD].pop();
-   if(mode==='soft'){S.staging.push(popped);line("HEAD moved back 1 — the commit's changes are back in STAGING.",'ok')}
-   else if(mode==='mixed'){S.working.push(popped);line("HEAD moved back 1 — changes are back in your WORKING folder (unstaged).",'ok')}
-   else{line("HEAD moved back 1 — changes DISCARDED.",'wn');note("--hard threw those changes away. If that was a mistake, the “Safe undo & recovery” chapter's reflog can usually get them back.")}
+   if(mode==='soft'){S.staging.push(popped);line("HEAD moved back 1 – the commit's changes are back in STAGING.",'ok')}
+   else if(mode==='mixed'){S.working.push(popped);line("HEAD moved back 1 – changes are back in your WORKING folder (unstaged).",'ok')}
+   else{line("HEAD moved back 1 – changes DISCARDED.",'wn');note("--hard threw those changes away. If that was a mistake, the “Safe undo & recovery” chapter's reflog can usually get them back.")}
   }else line("nothing to reset past",'di')}
- else if(/^git\s+reset\s+\S/.test(c)){name=c.replace(/^git\s+reset\s+(HEAD\s+)?/,'').trim();var z=S.staging.indexOf(name);if(z>-1){S.working.push(S.staging.splice(z,1)[0]);line("unstaged "+name,'ok')}else line("(reset) nothing staged named "+name,'di');note("git reset HEAD FILE is the old way to unstage — git restore --staged FILE is the modern wording.")}
+ else if(/^git\s+reset\s+\S/.test(c)){name=c.replace(/^git\s+reset\s+(HEAD\s+)?/,'').trim();var z=S.staging.indexOf(name);if(z>-1){S.working.push(S.staging.splice(z,1)[0]);line("unstaged "+name,'ok')}else line("(reset) nothing staged named "+name,'di');note("git reset HEAD FILE is the old way to unstage – git restore --staged FILE is the modern wording.")}
  else if(/^git\s+commit\s+--amend/.test(c)){if((S.local[S.HEAD]||[]).length){if(S.staging.length){S.staging=[]}line("amended the last commit (new message / folded-in changes).",'ok');note("--amend rewrites the most recent commit. Safe in private; never amend something you've already pushed.")}else line("no commit to amend",'er')}
 
  // ---- commit ----
  else if(/^git\s+commit\b/.test(c)){
-  if(S.conflict==='resolved'){S.conflict=false;S.staging=[];S.working=[];if(S.local.main.indexOf('fx')<0)S.local.main.push('fx');S.local[S.HEAD].push('M'+newC());line("Merge made — conflict resolved and committed.",'ok')}
+  if(S.conflict==='resolved'){S.conflict=false;S.staging=[];S.working=[];if(S.local.main.indexOf('fx')<0)S.local.main.push('fx');S.local[S.HEAD].push('M'+newC());line("Merge made – conflict resolved and committed.",'ok')}
   else if(/-a(m|\s|$)/.test(c)&&S.working.length){S.staging=S.staging.concat(S.working);S.working=[];S.local[S.HEAD].push(newC());var n2=S.staging.length;S.staging=[];line("["+S.HEAD+" "+('c'+cid)+"] "+(c.match(/-m\s+"?([^"]*)"?/)||[,'commit'])[1],'ok');note("-am added tracked files AND committed in one step.")}
   else if(!S.staging.length)line("nothing to commit (stage a file first with git add)",'er');
   else{S.local[S.HEAD].push(newC());var n=S.staging.length;S.staging=[];line("["+S.HEAD+" "+('c'+cid)+"] "+(c.match(/-m\s+"?([^"]*)"?/)||[,'commit'])[1],'ok');line(" "+n+" file(s) changed",'di')}
@@ -245,14 +245,14 @@ function run(raw){
 
  // ---- branches ----
  else if((m=c.match(/^git\s+(?:checkout\s+-b|switch\s+-c)\s+(\S+)/))){name=m[1];if(S.local[name])line("fatal: branch '"+name+"' already exists",'er');else{S.local[name]=S.local[S.HEAD].slice();S.prev=S.HEAD;S.HEAD=name;if(name!=='main')fb=name;line("Switched to a new branch '"+name+"'",'ok')}}
- else if((m=c.match(/^git\s+branch\s+(-d|-D)\s+(\S+)/))){var force=m[1]==='-D';name=m[2];if(!S.local[name]){line("branch '"+name+"' not found",'er')}else if(name===S.HEAD){line("can't delete the branch you're on — switch away first",'er')}else{var merged=(S.local[name]||[]).every(function(x){return (S.local.main||[]).indexOf(x)>-1});if(!merged&&!force){line("error: branch '"+name+"' is not fully merged. Use -D to force.",'er')}else{delete S.local[name];line("Deleted branch "+name,'ok');note(force?"-D force-deleted it (its commits may now be unreachable — reflog could still find them).":"-d deleted it safely (it was fully merged).")}}}
+ else if((m=c.match(/^git\s+branch\s+(-d|-D)\s+(\S+)/))){var force=m[1]==='-D';name=m[2];if(!S.local[name]){line("branch '"+name+"' not found",'er')}else if(name===S.HEAD){line("can't delete the branch you're on – switch away first",'er')}else{var merged=(S.local[name]||[]).every(function(x){return (S.local.main||[]).indexOf(x)>-1});if(!merged&&!force){line("error: branch '"+name+"' is not fully merged. Use -D to force.",'er')}else{delete S.local[name];line("Deleted branch "+name,'ok');note(force?"-D force-deleted it (its commits may now be unreachable – reflog could still find them).":"-d deleted it safely (it was fully merged).")}}}
  else if(/^git\s+branch\s*$/.test(c))Object.keys(S.local).forEach(function(b){line((b===S.HEAD?'* ':'  ')+b,b===S.HEAD?'ok':null)});
  else if((m=c.match(/^git\s+branch\s+(\S+)/))){name=m[1];if(!S.local[name]){S.local[name]=S.local[S.HEAD].slice();line("Created branch '"+name+"' (use git switch to move to it)",'ok')}else line("branch exists",'er')}
- else if(/^git\s+(switch|checkout)\s+-\s*$/.test(c)){if(S.prev&&S.local[S.prev]){var t=S.HEAD;S.HEAD=S.prev;S.prev=t;line("Switched to branch '"+S.HEAD+"'",'ok');note("the bare dash jumps to the branch you were just on — alt-tab for branches.")}else line("no previous branch to switch to",'di')}
+ else if(/^git\s+(switch|checkout)\s+-\s*$/.test(c)){if(S.prev&&S.local[S.prev]){var t=S.HEAD;S.HEAD=S.prev;S.prev=t;line("Switched to branch '"+S.HEAD+"'",'ok');note("the bare dash jumps to the branch you were just on – alt-tab for branches.")}else line("no previous branch to switch to",'di')}
  else if((m=c.match(/^git\s+(?:checkout|switch)\s+(\S+)/))){name=m[1];if(S.local[name]){S.prev=S.HEAD;S.HEAD=name;line("Switched to branch '"+name+"'",'ok')}else line("error: '"+name+"' did not match any branch",'er')}
 
  // ---- merge ----
- else if(/^git\s+merge\s+--abort/.test(c)){if(S.conflict){S.conflict=false;line("Merge aborted — back to where you started, no harm done.",'ok')}else line("no merge in progress",'di')}
+ else if(/^git\s+merge\s+--abort/.test(c)){if(S.conflict){S.conflict=false;line("Merge aborted – back to where you started, no harm done.",'ok')}else line("no merge in progress",'di')}
  else if((m=c.match(/^git\s+merge\s+(?:--no-ff\s+)?(\S+)/))){name=m[1];
   if(!S.local[name]){line("merge: "+name+" - not something we can merge",'er')}
   else{
@@ -260,46 +260,46 @@ function run(raw){
    var bothMoved=theirs.some(function(x){return mine.indexOf(x)<0})&&mine.some(function(x){return theirs.indexOf(x)<0});
    var conflictPair=(name==='feature'&&S.HEAD==='main'&&mine.indexOf('mx')>-1&&theirs.indexOf('fx')>-1);
    if(conflictPair){S.conflict=true;S.working.push('title.txt');line("Auto-merging title.txt",'di');line("CONFLICT (content): both changed the same line in title.txt",'er');line("Automatic merge failed; fix conflicts then git add + git commit.",'wn');note("Not broken! Open title.txt, delete the <<< === >>> markers, keep the lines you want, then git add it.")}
-   else{theirs.forEach(function(x){if(mine.indexOf(x)<0)mine.push(x)});if(bothMoved||/--no-ff/.test(c)){mine.push('M'+newC());line("Merge made by the 'ort' strategy — created a merge commit (M).",'ok')}else line("Fast-forward — "+S.HEAD+" slid forward to include "+name+".",'ok')}
+   else{theirs.forEach(function(x){if(mine.indexOf(x)<0)mine.push(x)});if(bothMoved||/--no-ff/.test(c)){mine.push('M'+newC());line("Merge made by the 'ort' strategy – created a merge commit (M).",'ok')}else line("Fast-forward – "+S.HEAD+" slid forward to include "+name+".",'ok')}
   }}
 
  // ---- stash ----
  else if(/^git\s+stash\s+list/.test(c)){if(S.stash.length)S.stash.forEach(function(s,i){line("stash@{"+i+"}: WIP on "+S.HEAD+": "+(s.files?s.files.join(', '):s),'di')});else line("(no stashes)",'di')}
- else if(/^git\s+stash\s+(pop|apply)/.test(c)){if(!S.stash.length){line("No stash entries found.",'di')}else{var item=/pop/.test(c)?S.stash.shift():S.stash[0];S.working=S.working.concat(item.files);line((/pop/.test(c)?"Popped":"Applied")+" stash — your changes are back.",'ok');note(/pop/.test(c)?"pop also removed it from the drawer.":"apply kept a copy in the drawer (git stash drop to remove).")}}
- else if(/^git\s+stash(\s+(push|-u|--include-untracked))?\s*$/.test(c)||/^git\s+stash\s+push/.test(c)){if(!S.working.length&&!S.staging.length){line("No local changes to save",'di')}else{S.stash.unshift({files:S.working.concat(S.staging)});S.working=[];S.staging=[];line("Saved working directory and index state — desk is clean.",'ok');note("your changes are parked. git stash pop brings them back.")}}
+ else if(/^git\s+stash\s+(pop|apply)/.test(c)){if(!S.stash.length){line("No stash entries found.",'di')}else{var item=/pop/.test(c)?S.stash.shift():S.stash[0];S.working=S.working.concat(item.files);line((/pop/.test(c)?"Popped":"Applied")+" stash – your changes are back.",'ok');note(/pop/.test(c)?"pop also removed it from the drawer.":"apply kept a copy in the drawer (git stash drop to remove).")}}
+ else if(/^git\s+stash(\s+(push|-u|--include-untracked))?\s*$/.test(c)||/^git\s+stash\s+push/.test(c)){if(!S.working.length&&!S.staging.length){line("No local changes to save",'di')}else{S.stash.unshift({files:S.working.concat(S.staging)});S.working=[];S.staging=[];line("Saved working directory and index state – desk is clean.",'ok');note("your changes are parked. git stash pop brings them back.")}}
 
  // ---- rebase ----
- else if(/^git\s+rebase\s+-i/.test(c)){var nm=c.match(/HEAD~(\d+)/);var nn=nm?+nm[1]:2;var b=S.local[S.HEAD];if(b.length>nn){var keep=b.slice(0,b.length-nn);keep.push('squashed');S.local[S.HEAD]=keep}line("(interactive) pick / squash / reword … — the chosen commits melted into one.",'ok');note("rebase -i rewrites the chosen commits into one tidy commit. Only on commits you haven't pushed.")}
- else if((m=c.match(/^git\s+rebase\s+(\S+)/))){name=m[1];if(!S.local[name]){line("invalid base: "+name,'er')}else{var base=S.local[name].slice(),mineOnly=S.local[S.HEAD].filter(function(x){return base.indexOf(x)<0});S.local[S.HEAD]=base.concat(mineOnly);line("Successfully rebased "+S.HEAD+" onto "+name+" — one clean line.",'ok');note("your commits were replanted on top of "+name+" (with new ids). Never do this to shared commits.")}}
+ else if(/^git\s+rebase\s+-i/.test(c)){var nm=c.match(/HEAD~(\d+)/);var nn=nm?+nm[1]:2;var b=S.local[S.HEAD];if(b.length>nn){var keep=b.slice(0,b.length-nn);keep.push('squashed');S.local[S.HEAD]=keep}line("(interactive) pick / squash / reword … – the chosen commits melted into one.",'ok');note("rebase -i rewrites the chosen commits into one tidy commit. Only on commits you haven't pushed.")}
+ else if((m=c.match(/^git\s+rebase\s+(\S+)/))){name=m[1];if(!S.local[name]){line("invalid base: "+name,'er')}else{var base=S.local[name].slice(),mineOnly=S.local[S.HEAD].filter(function(x){return base.indexOf(x)<0});S.local[S.HEAD]=base.concat(mineOnly);line("Successfully rebased "+S.HEAD+" onto "+name+" – one clean line.",'ok');note("your commits were replanted on top of "+name+" (with new ids). Never do this to shared commits.")}}
 
  // ---- cherry-pick ----
- else if((m=c.match(/^git\s+cherry-pick\s+(\S+)/))){name=m[1];var src=null;Object.keys(S.local).forEach(function(b){if(S.local[b].indexOf(name)>-1)src=b});if(!src){line("bad revision '"+name+"'",'er')}else if(S.local[S.HEAD].indexOf(name)>-1){line("commit already on this branch",'di')}else{S.local[S.HEAD].push(name);line("[" +S.HEAD+"] cherry-picked "+name+" — copied as a new commit here.",'ok');note("just that one commit's changes came over; the rest of "+src+" stayed put.")}}
+ else if((m=c.match(/^git\s+cherry-pick\s+(\S+)/))){name=m[1];var src=null;Object.keys(S.local).forEach(function(b){if(S.local[b].indexOf(name)>-1)src=b});if(!src){line("bad revision '"+name+"'",'er')}else if(S.local[S.HEAD].indexOf(name)>-1){line("commit already on this branch",'di')}else{S.local[S.HEAD].push(name);line("[" +S.HEAD+"] cherry-picked "+name+" – copied as a new commit here.",'ok');note("just that one commit's changes came over; the rest of "+src+" stayed put.")}}
 
  // ---- revert ----
- else if((m=c.match(/^git\s+revert\s+(\S+)/))){name=m[1];if(S.local[S.HEAD].indexOf(name)<0){line("bad revision '"+name+"'",'er')}else{S.local[S.HEAD].push('revert-'+name);line("Created a new commit that undoes "+name+".",'ok');note("revert doesn't erase history — it adds an opposite commit. That's why it's safe on shared branches.")}}
+ else if((m=c.match(/^git\s+revert\s+(\S+)/))){name=m[1];if(S.local[S.HEAD].indexOf(name)<0){line("bad revision '"+name+"'",'er')}else{S.local[S.HEAD].push('revert-'+name);line("Created a new commit that undoes "+name+".",'ok');note("revert doesn't erase history – it adds an opposite commit. That's why it's safe on shared branches.")}}
 
  // ---- reflog ----
  else if(/^git\s+reflog/.test(c)){(S.reflog.length?S.reflog:['(current): here']).forEach(function(r,i){line("HEAD@{"+i+"}: "+r,'di')});note("every move HEAD makes is logged here. To recover a 'lost' commit: git reset --hard <its id>.")}
 
  // ---- tags ----
- else if((m=c.match(/^git\s+tag\s+-a\s+(\S+)/))){name=m[1];S.tags[name]=(S.local[S.HEAD]||[]).slice(-1)[0];line("Created annotated tag "+name+" (with message + author).",'ok');note("annotated tags are the standard for real releases — richer and signable.")}
- else if((m=c.match(/^git\s+tag\s+(\S+)/))&&!/^-/.test(m[1])){name=m[1];S.tags[name]=(S.local[S.HEAD]||[]).slice(-1)[0];line("Created lightweight tag "+name+" — a permanent bookmark on this commit.",'ok')}
+ else if((m=c.match(/^git\s+tag\s+-a\s+(\S+)/))){name=m[1];S.tags[name]=(S.local[S.HEAD]||[]).slice(-1)[0];line("Created annotated tag "+name+" (with message + author).",'ok');note("annotated tags are the standard for real releases – richer and signable.")}
+ else if((m=c.match(/^git\s+tag\s+(\S+)/))&&!/^-/.test(m[1])){name=m[1];S.tags[name]=(S.local[S.HEAD]||[]).slice(-1)[0];line("Created lightweight tag "+name+" – a permanent bookmark on this commit.",'ok')}
  else if(/^git\s+tag\s*$/.test(c)){var tg=Object.keys(S.tags);if(tg.length)tg.forEach(function(t){line(t,'di')});else line("(no tags yet)",'di')}
 
  // ---- remotes / push / pull / fetch ----
  else if(/^git\s+remote/.test(c)){line("origin    https://github.com/you/project.git (fetch)");line("origin    ...(push)",'di');if(CH[curCh].show.upstream){line("upstream  https://github.com/anthropics/project.git (fetch)");line("upstream  ...(push)",'di')}}
- else if(/^git\s+fetch/.test(c)){line("Fetched new commits — downloaded, nothing merged yet.",'ok');note("fetch is the cautious half of pull. Look around, then merge when ready.")}
- else if(/^git\s+push.*(--force-with-lease)/.test(c)){name=fb||S.HEAD;S.origin[name]=S.local[name].slice();line("Force-pushed "+name+" (with lease) — remote updated safely.",'ok');note("succeeded because the remote hadn't changed since you fetched. If a teammate had pushed, this would have ABORTED instead of overwriting them.")}
- else if(/^git\s+push.*(--force|\s-f(\s|$))/.test(c)){name=fb||S.HEAD;S.origin[name]=S.local[name].slice();line("Force-updated "+name+" — remote now matches your version.",'wn');note("DANGER: --force overwrote the remote with zero checks. If anyone had pushed work you didn't have, it's gone. Prefer --force-with-lease.")}
+ else if(/^git\s+fetch/.test(c)){line("Fetched new commits – downloaded, nothing merged yet.",'ok');note("fetch is the cautious half of pull. Look around, then merge when ready.")}
+ else if(/^git\s+push.*(--force-with-lease)/.test(c)){name=fb||S.HEAD;S.origin[name]=S.local[name].slice();line("Force-pushed "+name+" (with lease) – remote updated safely.",'ok');note("succeeded because the remote hadn't changed since you fetched. If a teammate had pushed, this would have ABORTED instead of overwriting them.")}
+ else if(/^git\s+push.*(--force|\s-f(\s|$))/.test(c)){name=fb||S.HEAD;S.origin[name]=S.local[name].slice();line("Force-updated "+name+" – remote now matches your version.",'wn');note("DANGER: --force overwrote the remote with zero checks. If anyone had pushed work you didn't have, it's gone. Prefer --force-with-lease.")}
  else if(/^git\s+push\s+(origin\s+)?--tags\b/.test(c)){line("Pushed all tags to origin.",'ok');note("git push --tags (or git push origin --tags) sends every local tag at once.")}
- else if((m=c.match(/^git\s+push(?:\s+-u)?\s+\S+\s+(\S+)/))){name=m[1];if(/^v/.test(name)&&S.tags[name]){line("Pushed tag "+name+" to origin.",'ok');note("tags don't upload with a normal push — you have to send them explicitly.")}else if(!S.local[name]){line("src refspec "+name+" does not match any",'er')}else{var ff=!S.origin[name]||S.local[name].slice(0,S.origin[name].length).join()===S.origin[name].join();if(!ff){line("! [rejected]  "+name+" -> "+name+" (non-fast-forward)",'er');line("Updates were rejected — the remote has commits you don't. Pull, or force.",'wn')}else{S.origin[name]=S.local[name].slice();line("To origin — "+name+" -> "+name+(/-u/.test(c)?'  (upstream set)':''),'ok');if(/-u/.test(c))note("-u linked local "+name+" to origin/"+name+". From now, bare git push/pull just work.")}}}
+ else if((m=c.match(/^git\s+push(?:\s+-u)?\s+\S+\s+(\S+)/))){name=m[1];if(/^v/.test(name)&&S.tags[name]){line("Pushed tag "+name+" to origin.",'ok');note("tags don't upload with a normal push – you have to send them explicitly.")}else if(!S.local[name]){line("src refspec "+name+" does not match any",'er')}else{var ff=!S.origin[name]||S.local[name].slice(0,S.origin[name].length).join()===S.origin[name].join();if(!ff){line("! [rejected]  "+name+" -> "+name+" (non-fast-forward)",'er');line("Updates were rejected – the remote has commits you don't. Pull, or force.",'wn')}else{S.origin[name]=S.local[name].slice();line("To origin – "+name+" -> "+name+(/-u/.test(c)?'  (upstream set)':''),'ok');if(/-u/.test(c))note("-u linked local "+name+" to origin/"+name+". From now, bare git push/pull just work.")}}}
  else if(/^git\s+push\s+--tags/.test(c)){line("Pushed all tags to origin.",'ok')}
- else if(/^git\s+push\s*$/.test(c)){name=S.HEAD;var ff2=!S.origin[name]||S.local[name].slice(0,(S.origin[name]||[]).length).join()===(S.origin[name]||[]).join();if(S.origin[name]&&!ff2){line("! [rejected]  (non-fast-forward)",'er');line("The remote has diverged from you. Pull --rebase, or force-with-lease.",'wn')}else if(S.origin[name]){S.origin[name]=S.local[name].slice();line("To origin — pushed "+name,'ok')}else line("no upstream set — try git push -u origin "+name,'di')}
- else if(/^git\s+pull\s+--rebase/.test(c)){name=S.HEAD;var rem=(S.origin[name]||[]).slice();var mineO=S.local[name].filter(function(x){return rem.indexOf(x)<0});S.local[name]=rem.concat(mineO);line("Rebased your local commits on top of the latest "+name+" — straight line, no merge bubble.",'ok')}
- else if(/^git\s+pull\s+upstream\s+main/.test(c)){S.local[S.HEAD]=S.upstream.main.slice();line("From upstream — Fast-forward into "+S.HEAD,'ok')}
- else if((m=c.match(/^git\s+pull(?:\s+\S+)?\s+(\S+)/))||(m=/^git\s+pull\s*$/.test(c)?[,S.HEAD]:null)){name=m[1];if(S.origin[name]){S.local[name]=S.origin[name].slice();line("From origin — updated "+name+" (fetch + merge).",'ok')}else line("couldn't find remote ref "+name,'er')}
+ else if(/^git\s+push\s*$/.test(c)){name=S.HEAD;var ff2=!S.origin[name]||S.local[name].slice(0,(S.origin[name]||[]).length).join()===(S.origin[name]||[]).join();if(S.origin[name]&&!ff2){line("! [rejected]  (non-fast-forward)",'er');line("The remote has diverged from you. Pull --rebase, or force-with-lease.",'wn')}else if(S.origin[name]){S.origin[name]=S.local[name].slice();line("To origin – pushed "+name,'ok')}else line("no upstream set – try git push -u origin "+name,'di')}
+ else if(/^git\s+pull\s+--rebase/.test(c)){name=S.HEAD;var rem=(S.origin[name]||[]).slice();var mineO=S.local[name].filter(function(x){return rem.indexOf(x)<0});S.local[name]=rem.concat(mineO);line("Rebased your local commits on top of the latest "+name+" – straight line, no merge bubble.",'ok')}
+ else if(/^git\s+pull\s+upstream\s+main/.test(c)){S.local[S.HEAD]=S.upstream.main.slice();line("From upstream – Fast-forward into "+S.HEAD,'ok')}
+ else if((m=c.match(/^git\s+pull(?:\s+\S+)?\s+(\S+)/))||(m=/^git\s+pull\s*$/.test(c)?[,S.HEAD]:null)){name=m[1];if(S.origin[name]){S.local[name]=S.origin[name].slice();line("From origin – updated "+name+" (fetch + merge).",'ok')}else line("couldn't find remote ref "+name,'er')}
 
- else line(esc(c.split(' ')[0])+": not a command I know here — type help",'er');
+ else line(esc(c.split(' ')[0])+": not a command I know here – type help",'er');
 
  render();check(c);
 }
@@ -310,7 +310,7 @@ function run(raw){
 function check(c){
  var ms=CH[curCh].missions;if(curM>=ms.length)return;
  if(ms[curM].chk(c)){
-  note("✓ "+ms[curM].t+" — done",'erc');
+  note("✓ "+ms[curM].t+" – done",'erc');
   if(curM+1>=ms.length){curM++;chapterDone();return}
   if(CH[curCh].selfContained){
    var nk=curM+1,e=document.getElementById('expl'),b=document.createElement('button');
@@ -323,7 +323,7 @@ function chapterDone(){
  if(curCh+1>maxUnlocked)maxUnlocked=curCh+1;
  if(curCh+1>maxCompleted)maxCompleted=curCh+1;
  save();render();
- if(CH[curCh].recap)note("📝 Recap — "+CH[curCh].recap,'erp');
+ if(CH[curCh].recap)note("📝 Recap – "+CH[curCh].recap,'erp');
  if(curCh===CH.length-1){grad();return}
  var w=document.getElementById('win');w.style.display='block';
  w.innerHTML="<strong style='font-weight:500'><i class='ti ti-check' aria-hidden='true'></i> Chapter "+(curCh+1)+" complete!</strong> “"+CH[curCh+1].title+"” is unlocked.";
@@ -333,7 +333,7 @@ function chapterDone(){
 function grad(){
  document.getElementById('cmd').disabled=true;
  var w=document.getElementById('win');w.style.display='block';
- w.innerHTML="<strong style='font-weight:500'><i class='ti ti-trophy' aria-hidden='true'></i> Course complete.</strong><br>You went from “what's a repo?” to rebasing, force-pushing safely, and recovering lost commits with the reflog. That's the whole toolkit — go build something.";
+ w.innerHTML="<strong style='font-weight:500'><i class='ti ti-trophy' aria-hidden='true'></i> Course complete.</strong><br>You went from “what's a repo?” to rebasing, force-pushing safely, and recovering lost commits with the reflog. That's the whole toolkit – go build something.";
 }
 
 // ====================================================================
@@ -342,7 +342,7 @@ function grad(){
 document.getElementById('cmd').addEventListener('keydown',function(e){if(e.key==='Enter'){run(this.value);this.value=''}});
 document.getElementById('resetb').onclick=function(){goCh(curCh)};
 document.addEventListener('click',function(e){var mm=document.getElementById('navmenu');if(mm&&mm.style.display==='block'&&e.target&&e.target.closest&&!e.target.closest('#navmenu')&&!e.target.closest('#navc'))mm.style.display='none'});
-document.getElementById('unlockb').onclick=function(){maxUnlocked=CH.length-1;save();render();line("All chapters unlocked — jump anywhere from the map above.",'ok')};
+document.getElementById('unlockb').onclick=function(){maxUnlocked=CH.length-1;save();render();line("All chapters unlocked – jump anywhere from the map above.",'ok')};
 document.getElementById('wipeb').onclick=function(){if(confirm("Wipe all saved progress and start over from Chapter 1?")){try{localStorage.removeItem(KEY)}catch(e){}maxUnlocked=0;maxCompleted=0;startCh=0;goCh(0)}};
 
 load();
