@@ -117,7 +117,7 @@ input{font-family:inherit}
 /* two-column console: guidance card (left) + terminal (right), fixed height so the
    terminal never moves as the card content changes; long instructions scroll inside. */
 #gc .cols{display:flex;gap:14px;align-items:stretch;margin-bottom:14px}
-#gc .cols>.mcard,#gc .cols>.term{flex:1;min-width:0;height:460px;margin-bottom:0}
+#gc .cols>.mcard,#gc .cols>.term{flex:1;min-width:0;height:460px;margin-bottom:0;box-sizing:border-box}
 #gc .cols>.mcard{display:flex;flex-direction:column}
 #gc .mscroll{flex:1;overflow-y:auto;min-height:0}
 #gc .cols>.term{display:flex;flex-direction:column}
