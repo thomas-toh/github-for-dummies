@@ -18,14 +18,23 @@
 <div class="map" id="map"></div>
 <p class="blurb" id="blurb"></p>
 
-<div class="mcard">
-  <div class="mtop">
-    <strong id="mtitle" style="font-weight:500"></strong>
-    <div class="mnav" id="mnav"></div>
+<div class="cols">
+  <div class="mcard">
+    <div class="mtop">
+      <strong id="mtitle" style="font-weight:500"></strong>
+      <div class="mnav" id="mnav"></div>
+    </div>
+    <div class="navmenu" id="navmenu"></div>
+    <div class="mscroll">
+      <div id="mbody"></div>
+      <div class="expl" id="expl"></div>
+    </div>
   </div>
-  <div class="navmenu" id="navmenu"></div>
-  <div id="mbody"></div>
-  <div class="expl" id="expl"></div>
+
+  <div class="term">
+    <div id="out"></div>
+    <div class="pr"><span>$</span><input id="cmd" autocomplete="off" spellcheck="false" placeholder="type a command, then Enter  ·  try: help" aria-label="git command input"/></div>
+  </div>
 </div>
 
 <div class="pipe">
@@ -39,11 +48,6 @@
 <div class="graph" id="graph" style="display:none"></div>
 <div class="graph mtarget" id="mtarget" style="display:none"></div>
 <div class="remotes" id="remotes" style="display:none"></div>
-
-<div class="term">
-  <div id="out"></div>
-  <div class="pr"><span>$</span><input id="cmd" autocomplete="off" spellcheck="false" placeholder="type a command, then Enter  ·  try: help" aria-label="git command input"/></div>
-</div>
 
 <div class="foot">
   <button id="actbtn" style="font-size:13px;display:none"></button>

@@ -14,7 +14,7 @@
  --color-text-info:#85b7eb;--color-text-success:#5dcaa5;--color-text-warning:#fac775;--color-text-danger:#f09595;
  --color-border-tertiary:rgba(255,255,255,.15);--color-border-secondary:rgba(255,255,255,.3);
 }}
-body{margin:0;padding:24px;max-width:760px;margin:0 auto;background:var(--color-background-tertiary);color:var(--color-text-primary);font-family:var(--font-sans)}
+body{margin:0;padding:24px;max-width:1040px;margin:0 auto;background:var(--color-background-tertiary);color:var(--color-text-primary);font-family:var(--font-sans)}
 button{font-family:inherit;background:transparent;border:.5px solid var(--color-border-secondary);color:var(--color-text-primary);border-radius:var(--border-radius-md);padding:6px 12px;cursor:pointer}
 button:hover{background:var(--color-background-secondary)}button:active{transform:scale(.98)}button:disabled{opacity:.5;cursor:not-allowed}
 input{font-family:inherit}
@@ -113,3 +113,20 @@ input{font-family:inherit}
 #gc .goalk{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--color-text-success);font-weight:700;margin-bottom:3px}
 #gc .goalv{color:var(--color-text-primary)}
 #gc .contb{display:inline-block;margin-top:10px;font-size:13px;background:var(--color-background-success);border-color:var(--color-text-success);color:var(--color-text-success)}
+
+/* two-column console: guidance card (left) + terminal (right), fixed height so the
+   terminal never moves as the card content changes; long instructions scroll inside. */
+#gc .cols{display:flex;gap:14px;align-items:stretch;margin-bottom:14px}
+#gc .cols>.mcard,#gc .cols>.term{flex:1;min-width:0;height:460px;margin-bottom:0}
+#gc .cols>.mcard{display:flex;flex-direction:column}
+#gc .mscroll{flex:1;overflow-y:auto;min-height:0}
+#gc .cols>.term{display:flex;flex-direction:column}
+#gc .cols>.term #out{flex:1;max-height:none}
+/* narrow / mobile: stack and let everything size naturally */
+@media(max-width:760px){
+ body{padding:16px;max-width:none}
+ #gc .cols{flex-direction:column}
+ #gc .cols>.mcard,#gc .cols>.term{height:auto}
+ #gc .mscroll{overflow-y:visible}
+ #gc .cols>.term #out{max-height:240px;flex:none}
+}
