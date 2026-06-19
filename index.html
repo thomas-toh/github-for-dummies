@@ -174,7 +174,6 @@ input{font-family:inherit}
 </div>
 
 <script>
-function sendPrompt(t){alert("In Claude Code this would ask:\n\n"+t)}
 (function(){
 var S,fb,prDone,cid,curCh=0,curM=0,maxUnlocked=0,maxCompleted=0,setupDone,startCh=0;
 var KEY='gitcourse.progress';
@@ -186,7 +185,7 @@ function load(){try{var d=JSON.parse(localStorage.getItem(KEY)||'{}');if(typeof 
 function seed(f){if(S.working.indexOf(f)<0&&S.staging.indexOf(f)<0)S.working.push(f)}
 function hl(b){return (S.local[b]||[]).length}
 function newC(){cid++;return 'c'+cid}
-function blank(){return {HEAD:'main',local:{main:['c0']},working:[],staging:[],origin:{},upstream:{},tags:{},stash:[],reflog:[],conflict:false,fetched:false}}
+function blank(){return {HEAD:'main',local:{main:['c0']},working:[],staging:[],origin:{},upstream:{},tags:{},stash:[],reflog:[],conflict:false}}
 
 // ====================================================================
 //  CURRICULUM
@@ -352,7 +351,7 @@ var CH=[
    target:{local:{main:['c0','c1','m3','h1','M4'],hotfix:['c0','c1','h1']},HEAD:'main'},
    chk:function(){return (S.local.main.indexOf('h1')>-1)&&S.local.main.some(function(x){return x[0]==='M'})}}
  ],
- recap:"merge brings another branch INTO the one you're standing on · fast-forward = main slides forward in a straight line · a merge commit (M) ties two diverged lines together · --no-ff forces a merge commit. See the bonus widget below for merge direction."},
+ recap:"merge brings another branch INTO the one you're standing on · fast-forward = main slides forward in a straight line · a merge commit (M) ties two diverged lines together · --no-ff forces a merge commit."},
 
 {sec:"Essentials",title:"Merge conflicts",diff:3,show:{branches:true,graph:true},selfContained:true,
  blurb:"The moment every beginner dreads, defused. A conflict just means two branches edited the SAME line and git refuses to guess which you meant. It's not an error — it's git asking you a polite question.",
@@ -946,7 +945,7 @@ function run(raw){
 
  // ---- remotes / push / pull / fetch ----
  else if(/^git\s+remote/.test(c)){line("origin    https://github.com/you/project.git (fetch)");line("origin    ...(push)",'di');if(CH[curCh].show.upstream){line("upstream  https://github.com/anthropics/project.git (fetch)");line("upstream  ...(push)",'di')}}
- else if(/^git\s+fetch/.test(c)){S.fetched=true;line("Fetched new commits — downloaded, nothing merged yet.",'ok');note("fetch is the cautious half of pull. Look around, then merge when ready.")}
+ else if(/^git\s+fetch/.test(c)){line("Fetched new commits — downloaded, nothing merged yet.",'ok');note("fetch is the cautious half of pull. Look around, then merge when ready.")}
  else if(/^git\s+push.*(--force-with-lease)/.test(c)){name=fb||S.HEAD;S.origin[name]=S.local[name].slice();line("Force-pushed "+name+" (with lease) — remote updated safely.",'ok');note("succeeded because the remote hadn't changed since you fetched. If a teammate had pushed, this would have ABORTED instead of overwriting them.")}
  else if(/^git\s+push.*(--force|\s-f(\s|$))/.test(c)){name=fb||S.HEAD;S.origin[name]=S.local[name].slice();line("Force-updated "+name+" — remote now matches your version.",'wn');note("DANGER: --force overwrote the remote with zero checks. If anyone had pushed work you didn't have, it's gone. Prefer --force-with-lease.")}
  else if(/^git\s+push\s+(origin\s+)?--tags\b/.test(c)){line("Pushed all tags to origin.",'ok');note("git push --tags (or git push origin --tags) sends every local tag at once.")}
@@ -954,7 +953,7 @@ function run(raw){
  else if(/^git\s+push\s+--tags/.test(c)){line("Pushed all tags to origin.",'ok')}
  else if(/^git\s+push\s*$/.test(c)){name=S.HEAD;var ff2=!S.origin[name]||S.local[name].slice(0,(S.origin[name]||[]).length).join()===(S.origin[name]||[]).join();if(S.origin[name]&&!ff2){line("! [rejected]  (non-fast-forward)",'er');line("The remote has diverged from you. Pull --rebase, or force-with-lease.",'wn')}else if(S.origin[name]){S.origin[name]=S.local[name].slice();line("To origin — pushed "+name,'ok')}else line("no upstream set — try git push -u origin "+name,'di')}
  else if(/^git\s+pull\s+--rebase/.test(c)){name=S.HEAD;var rem=(S.origin[name]||[]).slice();var mineO=S.local[name].filter(function(x){return rem.indexOf(x)<0});S.local[name]=rem.concat(mineO);line("Rebased your local commits on top of the latest "+name+" — straight line, no merge bubble.",'ok')}
- else if(/^git\s+pull\s+upstream\s+main/.test(c)){S.fetched=true;S.local[S.HEAD]=S.upstream.main.slice();line("From upstream — Fast-forward into "+S.HEAD,'ok')}
+ else if(/^git\s+pull\s+upstream\s+main/.test(c)){S.local[S.HEAD]=S.upstream.main.slice();line("From upstream — Fast-forward into "+S.HEAD,'ok')}
  else if((m=c.match(/^git\s+pull(?:\s+\S+)?\s+(\S+)/))||(m=/^git\s+pull\s*$/.test(c)?[,S.HEAD]:null)){name=m[1];if(S.origin[name]){S.local[name]=S.origin[name].slice();line("From origin — updated "+name+" (fetch + merge).",'ok')}else line("couldn't find remote ref "+name,'er')}
 
  else line(esc(c.split(' ')[0])+": not a command I know here — type help",'er');
@@ -1005,106 +1004,6 @@ document.getElementById('wipeb').onclick=function(){if(confirm("Wipe all saved p
 
 load();
 goCh(Math.min(startCh,CH.length-1));
-})();
-</script>
-
-<hr style="border:none;border-top:0.5px solid var(--color-border-tertiary);margin:32px 0 24px">
-<h3 style="font-weight:500;margin:0 0 4px">Bonus · which way does merge go?</h3>
-<p style="color:var(--color-text-secondary);line-height:1.6;margin:0 0 16px;font-size:13.5px">Pick which branch you're standing on, then merge the other in. Only the branch you're <em>on</em> changes.</p>
-
-<div id="md">
-<style>
-#md .stage{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:14px}
-#md .lane{display:flex;align-items:center;gap:14px;margin:10px 0}
-#md .lh{width:86px;font-family:var(--font-mono);font-size:13px;display:flex;flex-direction:column;gap:3px}
-#md .head{font-size:10px;background:var(--color-background-info);color:var(--color-text-info);padding:1px 7px;border-radius:20px;width:max-content;font-family:var(--font-sans)}
-#md .nodes{display:flex;align-items:center}
-#md .node{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:13px;font-weight:500;flex-shrink:0}
-#md .ln{width:16px;height:2px;background:var(--color-border-secondary);flex-shrink:0}
-#md .dir{display:flex;align-items:center;justify-content:center;gap:6px;color:var(--color-text-secondary);font-size:12px;height:20px}
-#md .ctrls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-#md .ctrls .seg{display:flex;gap:6px}
-#md button.act{border:2px solid var(--color-border-info)}
-#md .cmd{font-family:var(--font-mono);font-size:13px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:9px 12px;margin-bottom:12px;color:var(--color-text-primary)}
-#md .cap{line-height:1.6;background:var(--color-background-info);border-radius:var(--border-radius-md);padding:11px 13px;color:var(--color-text-info)}
-#md .cap.ok{background:var(--color-background-success);color:var(--color-text-success)}
-#md .leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--color-text-secondary);margin-top:12px}
-#md .leg i{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:-1px;margin-right:4px}
-</style>
-
-<div class="ctrls">
-  <span style="font-size:13px;color:var(--color-text-secondary)">I'm on:</span>
-  <div class="seg">
-    <button id="b-main" style="font-size:13px">git checkout main</button>
-    <button id="b-feature" style="font-size:13px">git checkout feature</button>
-  </div>
-  <button id="b-merge" style="font-size:13px;margin-left:auto"><i class="ti ti-git-merge" aria-hidden="true"></i> <span id="mergelbl">merge</span></button>
-  <button id="b-mreset" style="font-size:13px"><i class="ti ti-refresh" aria-hidden="true"></i></button>
-</div>
-
-<div class="cmd" id="md-cmd"></div>
-
-<div class="stage">
-  <div class="lane"><div class="lh"><span>main</span><span class="head" id="h-main" style="display:none">◀ HEAD</span></div><div class="nodes" id="n-main"></div></div>
-  <div class="dir" id="md-dir"></div>
-  <div class="lane"><div class="lh"><span>feature</span><span class="head" id="h-feature" style="display:none">◀ HEAD</span></div><div class="nodes" id="n-feature"></div></div>
-  <div class="leg">
-    <span><i style="background:var(--color-background-secondary)"></i>shared</span>
-    <span><i style="background:var(--color-background-info)"></i>main-only</span>
-    <span><i style="background:var(--color-background-warning)"></i>feature-only</span>
-    <span><i style="background:var(--color-background-success)"></i>merge commit</span>
-  </div>
-</div>
-
-<div class="cap" id="md-cap"></div>
-</div>
-
-<script>
-(function(){
-var S;
-function init(){S={main:[['A','s'],['B','s'],['E','m']],feature:[['A','s'],['B','s'],['C','f'],['D','f']],HEAD:'main',done:false}}
-function col(k){return {s:['var(--color-background-secondary)','var(--color-text-secondary)'],m:['var(--color-background-info)','var(--color-text-info)'],f:['var(--color-background-warning)','var(--color-text-warning)'],x:['var(--color-background-success)','var(--color-text-success)']}[k]}
-function checkout(b){init();S.HEAD=b;render()}
-function reset(){var h=S?S.HEAD:'main';init();S.HEAD=h;render()}
-function merge(){
- if(S.done)return;var other=S.HEAD==='main'?'feature':'main',tgt=S.HEAD;
- var have={};S[tgt].forEach(function(n){have[n[0]]=1});
- S[other].forEach(function(n){if(!have[n[0]])S[tgt].push([n[0],n[1]])});
- S[tgt].push(['M','x']);S.done=true;render();
-}
-function lane(br){
- var el=document.getElementById('n-'+br),html='';
- S[br].forEach(function(n,i){var c=col(n[1]);if(i)html+='<span class="ln"></span>';
-  html+='<span class="node" style="background:'+c[0]+';color:'+c[1]+'">'+n[0]+'</span>'});
- el.innerHTML=html;
- document.getElementById('h-'+br).style.display=S.HEAD===br?'block':'none';
-}
-function render(){
- lane('main');lane('feature');
- var other=S.HEAD==='main'?'feature':'main';
- document.getElementById('b-main').className=S.HEAD==='main'?'act':'';
- document.getElementById('b-feature').className=S.HEAD==='feature'?'act':'';
- document.getElementById('mergelbl').textContent='git merge '+other;
- document.getElementById('b-merge').disabled=S.done;
- document.getElementById('md-cmd').textContent='$ git checkout '+S.HEAD+'  &&  git merge '+other;
- var dir=document.getElementById('md-dir');
- if(S.HEAD==='main')dir.innerHTML='<i class="ti ti-arrow-up" aria-hidden="true"></i> feature\'s commits flow up into main';
- else dir.innerHTML='<i class="ti ti-arrow-down" aria-hidden="true"></i> main\'s commits flow down into feature';
- var cap=document.getElementById('md-cap');
- if(!S.done){
-  cap.className='cap';
-  if(S.HEAD==='main')cap.innerHTML="<strong style='font-weight:500'>main</strong> will absorb feature. main changes; feature stays put. → Do this when feature is <strong style='font-weight:500'>finished</strong> and you're delivering it into the mainline.";
-  else cap.innerHTML="<strong style='font-weight:500'>feature</strong> will absorb main. feature changes; main stays put. → Do this when you're <strong style='font-weight:500'>still working</strong> and want your branch caught up with the latest main.";
- } else {
-  cap.className='cap ok';
-  cap.innerHTML="<i class='ti ti-check' aria-hidden='true'></i> Merged. Only <strong style='font-weight:500'>"+S.HEAD+"</strong> grew — it now holds every commit plus a merge node (M). <strong style='font-weight:500'>"+other+"</strong> is unchanged. Switch to the other branch to try the opposite direction.";
- }
-}
-document.getElementById('b-main').onclick=function(){checkout('main')};
-document.getElementById('b-feature').onclick=function(){checkout('feature')};
-document.getElementById('b-merge').onclick=merge;
-document.getElementById('b-mreset').onclick=reset;
-init();render();
 })();
 </script>
 
