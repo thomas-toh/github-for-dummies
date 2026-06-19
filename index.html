@@ -120,6 +120,7 @@ input{font-family:inherit}
 #gc .synline{font-size:13.5px;line-height:2}
 #gc .mcard code{font-family:var(--font-mono);font-size:12.5px;color:var(--color-text-info);background:var(--color-background-secondary);border-radius:5px;padding:1.5px 6px}
 #gc .ph{font-family:var(--font-mono);font-size:12.5px;font-style:italic;color:var(--color-text-tertiary)}
+#gc .shtok{font-family:var(--font-mono);font-size:12.5px;color:var(--color-text-tertiary)}
 #gc .synparts{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
 #gc .synparts li{font-size:12.5px;line-height:1.55;color:var(--color-text-secondary)}
 #gc .synparts .sx{color:var(--color-text-tertiary)}
@@ -199,7 +200,7 @@ var CH=[
   {t:"Turn this folder into a repo",
    lay:"git init turns the plain folder you're in into something git watches. You run it once, right at the start of a project — after that, git can save snapshots of your work whenever you ask.",
    tech:"Technically it creates a hidden “.git” sub-folder inside the current directory. That folder is where git stores every commit, branch and scrap of history; your own files are left exactly as they were.",
-   syntax:[{t:"git init",k:"cmd",note:"the whole command — it takes no arguments and just acts on the folder you're currently in"}],
+   syntax:[{t:"git init",k:"cmd",note:"in everyday use you run it with no arguments — it just acts on the folder you're in (it can take an optional directory or flags like -b, but you rarely need them)"}],
    goal:"Initialise a git repository in this folder.",
    chk:function(c){return /^git\s+init/.test(c.trim())}},
   {t:"Check the status",
@@ -244,7 +245,7 @@ var CH=[
   {t:"Do the whole loop again",cmd:"git add + commit",
    lay:"That edit → add → commit cycle is the heartbeat of git — you'll do it thousands of times. This time, do both steps yourself.",
    tech:"The shortcut git commit -am \"<msg>\" stages and commits in one move — but only for files git already tracks; brand-new files still need a plain git add first.",
-   syntax:[{t:"git add .",k:"cmd"},{t:";",k:"arg",note:"runs the next command after this one (or just press Enter between the two commands)"},{t:"git commit",k:"cmd"},{t:"-m",k:"flag"},{t:"\"<message>\"",k:"arg",note:"your message — or use git commit -am \"…\" to do add + commit together"}],
+   syntax:[{t:"git add",k:"cmd"},{t:".",k:"arg",note:"stage everything in the current folder"},{t:";",k:"sh",note:"a shell separator (not part of git) — runs the next command after this one; you could also just press Enter between the two commands"},{t:"git commit",k:"cmd"},{t:"-m",k:"flag"},{t:"\"<message>\"",k:"arg",note:"your message — or use git commit -am \"…\" to do add + commit in one step"}],
    goal:"Stage notes.txt and commit it (any message). You've now done the full loop on your own.",
    setup:function(){S.local={main:['c0','c1']};seed('notes.txt')},chk:function(){return hl('main')>=3}}
  ],
@@ -564,7 +565,7 @@ function render(){
  }
 }
 
-function tok(p){var t=esc(p.t);return p.k==='arg'?'<span class="ph">'+t+'</span>':'<code>'+t+'</code>'}
+function tok(p){var t=esc(p.t);return p.k==='arg'?'<span class="ph">'+t+'</span>':p.k==='sh'?'<span class="shtok">'+t+'</span>':'<code>'+t+'</code>'}
 function skeleton(a){return a.map(tok).join(' ')}
 function missionBody(m){
  if(m.lay||m.tech){
@@ -588,6 +589,7 @@ function missionCmd(m){return m.cmd||(m.syntax&&m.syntax[0]&&m.syntax[0].t)||(m.
 function renderNav(ch,sc){
  var nav=document.getElementById('mnav'),menu=document.getElementById('navmenu'),n=ch.missions.length,dots='',i;
  for(i=0;i<n;i++)dots+='<span class="pdot '+(i<curM?'done':i===curM?'cur':'')+'"></span>';
+ menu.style.display='none';
  if(sc){
   nav.innerHTML='<button class="navx" id="navprev"'+(curM<=0?' disabled':'')+'>‹</button><span class="pdots">'+dots+'</span><button class="navx" id="navnext"'+(curM>=n-1?' disabled':'')+'>›</button><button class="navc" id="navc">contents ▾</button>';
   document.getElementById('navprev').onclick=function(){if(curM>0)goMission(curM-1)};
@@ -808,6 +810,7 @@ function grad(){
 // ====================================================================
 document.getElementById('cmd').addEventListener('keydown',function(e){if(e.key==='Enter'){run(this.value);this.value=''}});
 document.getElementById('resetb').onclick=function(){goCh(curCh)};
+document.addEventListener('click',function(e){var mm=document.getElementById('navmenu');if(mm&&mm.style.display==='block'&&e.target&&e.target.closest&&!e.target.closest('#navmenu')&&!e.target.closest('#navc'))mm.style.display='none'});
 document.getElementById('unlockb').onclick=function(){maxUnlocked=CH.length-1;save();render();line("All chapters unlocked — jump anywhere from the map above.",'ok')};
 document.getElementById('wipeb').onclick=function(){if(confirm("Wipe all saved progress and start over from Chapter 1?")){try{localStorage.removeItem(KEY)}catch(e){}maxUnlocked=0;maxCompleted=0;startCh=0;goCh(0)}};
 
