@@ -3,3 +3,6 @@
 
 # Claude Code local (personal) settings
 .claude/settings.local.json
+
+# Claude project guidance (personal — not published)
+CLAUDE.md
