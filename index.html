@@ -572,7 +572,9 @@ function missionBody(m){
   var h='';
   if(m.lay)h+='<p class="lay">'+esc(m.lay)+'</p>';
   if(m.tech)h+='<p class="tech">'+esc(m.tech)+'</p>';
-  if(m.syntax&&m.syntax.length){h+='<div class="syn"><div class="synline">'+skeleton(m.syntax)+'</div>';
+  if(m.syntax&&m.syntax.length===1){var p0=m.syntax[0];
+   h+='<div class="syn"><div class="synline">'+tok(p0)+(p0.note?' <span class="sx">—</span> '+esc(p0.note):'')+'</div></div>';}
+  else if(m.syntax&&m.syntax.length){h+='<div class="syn"><div class="synline">'+skeleton(m.syntax)+'</div>';
    var notes=m.syntax.filter(function(p){return p.note});
    if(notes.length)h+='<ul class="synparts">'+notes.map(function(p){return '<li>'+tok(p)+' <span class="sx">—</span> '+esc(p.note)+'</li>'}).join('')+'</ul>';
    h+='</div>';}
