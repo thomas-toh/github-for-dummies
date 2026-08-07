@@ -1,14 +1,8 @@
-# I gameified something so I didn't have to read the documentation.
-
-As is the best way to learn. Runs on Git Pages.
-
----
-
-## Why I built this
+## I am the dummy
 
 I read for my job, I didn't want to dig through documentation, I'm chronically on my phone, and I have a Claude subscription.
 
-Chapters are graded by difficulty (obviously). Internal chapter markers show you each command. Navigation needs some work but it's 
+Chapters are graded by difficulty. Internal chapter markers show you each command. Navigation needs some work but it's 
 passable. Commands are entered into a mockup terminal.
 
 ## Chapters
@@ -48,18 +42,17 @@ Or you can use the following command in the folder once downloaded:
 open index.html        # macOS — or double-click it, or drag it into any browser
 ```
 
-(Frankly, if you knew how to do that, what's the chance you'd need this anyway?)
+(but if you knew how to do that I doubt you'd need this)
 
 ## To dos
 
-- Clean up the ugly navigation.
-- Daily challenges (?)
-- App (??)
-- The same thing but for a different topic altogether?
+- Clean up the ugly navigation
+- Daily challenges
+- App
 
 ## License
 
-[MIT](LICENSE), of course.
+[MIT](LICENSE).
 
 ---
 
